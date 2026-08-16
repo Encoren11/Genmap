@@ -1,31 +1,638 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Genshin Interactive Map</title>
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-  <style>
-    html, body {
-      margin: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      background: #111;
+<title>Genshin Map</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #101217;
+    font-family: Arial, sans-serif;
+}
+
+/* КАРТА */
+
+.map {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+}
+
+.map iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+/* ВЕРХНЯЯ ПАНЕЛЬ */
+
+.top-panel {
+    position: fixed;
+    top: 14px;
+    left: 14px;
+    right: 14px;
+    z-index: 10;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.search {
+    flex: 1;
+    height: 48px;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 0 16px;
+
+    background: rgba(20, 23, 31, .94);
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 15px;
+
+    color: white;
+
+    box-shadow: 0 8px 30px rgba(0,0,0,.35);
+    backdrop-filter: blur(12px);
+}
+
+.search-icon {
+    font-size: 19px;
+    opacity: .7;
+}
+
+.search input {
+    width: 100%;
+    border: 0;
+    outline: 0;
+
+    background: transparent;
+    color: white;
+
+    font-size: 15px;
+}
+
+.search input::placeholder {
+    color: #8c919e;
+}
+
+/* КНОПКА ПАНЕЛИ */
+
+.menu-button {
+    width: 48px;
+    height: 48px;
+
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 15px;
+
+    background: rgba(20,23,31,.94);
+    color: white;
+
+    font-size: 21px;
+
+    box-shadow: 0 8px 30px rgba(0,0,0,.35);
+}
+
+/* БОКОВАЯ ПАНЕЛЬ */
+
+.categories {
+    position: fixed;
+    left: 14px;
+    top: 78px;
+    bottom: 14px;
+
+    width: 280px;
+
+    z-index: 9;
+
+    padding: 16px;
+
+    background: rgba(18,21,29,.96);
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 18px;
+
+    color: white;
+
+    box-shadow: 0 15px 50px rgba(0,0,0,.45);
+    backdrop-filter: blur(14px);
+
+    overflow-y: auto;
+
+    transition: transform .25s ease;
+}
+
+.categories.hidden {
+    transform: translateX(-330px);
+}
+
+.title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.subtitle {
+    color: #8e94a3;
+    font-size: 12px;
+    margin-bottom: 18px;
+}
+
+.section-title {
+    color: #9ca3b2;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+
+    margin: 18px 0 9px;
+}
+
+/* КАТЕГОРИЯ */
+
+.category {
+    display: flex;
+    align-items: center;
+
+    width: 100%;
+    min-height: 48px;
+
+    margin-bottom: 7px;
+
+    padding: 8px 10px;
+
+    border-radius: 12px;
+
+    background: rgba(255,255,255,.045);
+
+    transition: .15s;
+}
+
+.category:active {
+    transform: scale(.98);
+}
+
+.category-icon {
+    width: 34px;
+    height: 34px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-right: 10px;
+
+    border-radius: 10px;
+
+    background: rgba(255,255,255,.07);
+
+    font-size: 18px;
+}
+
+.category-info {
+    flex: 1;
+}
+
+.category-name {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.category-count {
+    color: #777e8d;
+    font-size: 10px;
+    margin-top: 2px;
+}
+
+/* ПЕРЕКЛЮЧАТЕЛЬ */
+
+.switch {
+    width: 40px;
+    height: 23px;
+
+    position: relative;
+
+    background: #343944;
+    border-radius: 20px;
+
+    transition: .2s;
+}
+
+.switch::after {
+    content: "";
+
+    position: absolute;
+
+    width: 17px;
+    height: 17px;
+
+    top: 3px;
+    left: 3px;
+
+    border-radius: 50%;
+
+    background: #fff;
+
+    transition: .2s;
+}
+
+.category.active .switch {
+    background: #6d8cff;
+}
+
+.category.active .switch::after {
+    transform: translateX(17px);
+}
+
+/* НИЖНЯЯ ПАНЕЛЬ */
+
+.bottom-nav {
+    display: none;
+
+    position: fixed;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+
+    height: 67px;
+
+    z-index: 11;
+
+    background: rgba(18,21,29,.97);
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 19px;
+
+    box-shadow: 0 10px 40px rgba(0,0,0,.45);
+    backdrop-filter: blur(15px);
+
+    align-items: center;
+    justify-content: space-around;
+}
+
+.nav-item {
+    width: 25%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    gap: 4px;
+
+    color: #777e8d;
+
+    font-size: 10px;
+}
+
+.nav-item span:first-child {
+    font-size: 20px;
+}
+
+.nav-item.active {
+    color: #8ca6ff;
+}
+
+/* МОБИЛЬНАЯ ВЕРСИЯ */
+
+@media (max-width: 700px) {
+
+    .top-panel {
+        top: 10px;
+        left: 10px;
+        right: 10px;
     }
 
-    iframe {
-      width: 100%;
-      height: 100%;
-      border: 0;
+    .categories {
+        left: 10px;
+        right: 10px;
+        top: auto;
+        bottom: 87px;
+
+        width: auto;
+        max-height: 62vh;
+
+        transform: translateY(calc(100% + 100px));
+
+        border-radius: 20px;
     }
-  </style>
+
+    .categories.open {
+        transform: translateY(0);
+    }
+
+    .categories.hidden {
+        transform: translateY(calc(100% + 100px));
+    }
+
+    .bottom-nav {
+        display: flex;
+    }
+
+    .category {
+        min-height: 50px;
+    }
+
+    .title {
+        font-size: 18px;
+    }
+}
+</style>
 </head>
 
 <body>
-  <iframe
-    src="https://genshin-impact-map.appsample.com/location?no_heading=1"
-    allowfullscreen>
-  </iframe>
+
+<!-- КАРТА -->
+<div class="map">
+    <iframe
+        src="https://genshin-impact-map.appsample.com/location?no_heading=1"
+        allowfullscreen>
+    </iframe>
+</div>
+
+
+<!-- ПОИСК -->
+<div class="top-panel">
+
+    <div class="search">
+        <span class="search-icon">🔍</span>
+
+        <input
+            id="search"
+            type="text"
+            placeholder="Найти на карте..."
+            autocomplete="off">
+    </div>
+
+    <button class="menu-button" id="menuButton">
+        ☰
+    </button>
+
+</div>
+
+
+<!-- КАТЕГОРИИ -->
+<div class="categories" id="categories">
+
+    <div class="title">
+        🗺️ Карта Тейвата
+    </div>
+
+    <div class="subtitle">
+        Выберите объекты, которые хотите видеть
+    </div>
+
+
+    <div class="section-title">
+        Объекты
+    </div>
+
+
+    <div class="category active" data-type="chests">
+        <div class="category-icon">📦</div>
+
+        <div class="category-info">
+            <div class="category-name">
+                Сундуки
+            </div>
+
+            <div class="category-count">
+                Все типы сундуков
+            </div>
+        </div>
+
+        <div class="switch"></div>
+    </div>
+
+
+    <div class="category active" data-type="seelie">
+        <div class="category-icon">🧚</div>
+
+        <div class="category-info">
+            <div class="category-name">
+                Феи
+            </div>
+
+            <div class="category-count">
+                Seelie
+            </div>
+        </div>
+
+        <div class="switch"></div>
+    </div>
+
+
+    <div class="category active" data-type="oculi">
+        <div class="category-icon">💠</div>
+
+        <div class="category-info">
+            <div class="category-name">
+                Окулусы
+            </div>
+
+            <div class="category-count">
+                Анемокулы, Геокулы и другие
+            </div>
+        </div>
+
+        <div class="switch"></div>
+    </div>
+
+
+    <div class="category active" data-type="teleport">
+        <div class="category-icon">🌀</div>
+
+        <div class="category-info">
+            <div class="category-name">
+                Телепорты
+            </div>
+
+            <div class="category-count">
+                Точки телепортации
+            </div>
+        </div>
+
+        <div class="switch"></div>
+    </div>
+
+
+    <div class="category active" data-type="resources">
+        <div class="category-icon">🌿</div>
+
+        <div class="category-info">
+            <div class="category-name">
+                Ресурсы
+            </div>
+
+            <div class="category-count">
+                Растения и материалы
+            </div>
+        </div>
+
+        <div class="switch"></div>
+    </div>
+
+
+    <div class="category active" data-type="bosses">
+        <div class="category-icon">👹</div>
+
+        <div class="category-info">
+            <div class="category-name">
+                Боссы
+            </div>
+
+            <div class="category-count">
+                Мировые и еженедельные
+            </div>
+        </div>
+
+        <div class="switch"></div>
+    </div>
+
+
+    <div class="category active" data-type="challenges">
+        <div class="category-icon">🎯</div>
+
+        <div class="category-info">
+            <div class="category-name">
+                Испытания
+            </div>
+
+            <div class="category-count">
+                Испытания на время
+            </div>
+        </div>
+
+        <div class="switch"></div>
+    </div>
+
+</div>
+
+
+<!-- НИЖНЕЕ МЕНЮ -->
+<div class="bottom-nav">
+
+    <div class="nav-item active" data-tab="map">
+        <span>🗺️</span>
+        <span>Карта</span>
+    </div>
+
+    <div class="nav-item" data-tab="progress">
+        <span>📊</span>
+        <span>Прогресс</span>
+    </div>
+
+    <div class="nav-item" data-tab="favorites">
+        <span>⭐</span>
+        <span>Избранное</span>
+    </div>
+
+    <div class="nav-item" data-tab="settings">
+        <span>⚙️</span>
+        <span>Настройки</span>
+    </div>
+
+</div>
+
+
+<script>
+
+/* ОТКРЫТИЕ ПАНЕЛИ */
+
+const menuButton = document.getElementById("menuButton");
+const categories = document.getElementById("categories");
+
+menuButton.addEventListener("click", () => {
+
+    if (window.innerWidth <= 700) {
+        categories.classList.toggle("open");
+    } else {
+        categories.classList.toggle("hidden");
+    }
+
+});
+
+
+/* ПЕРЕКЛЮЧАТЕЛИ КАТЕГОРИЙ */
+
+document.querySelectorAll(".category").forEach(category => {
+
+    category.addEventListener("click", () => {
+
+        category.classList.toggle("active");
+
+        const type = category.dataset.type;
+
+        console.log(
+            "Категория:",
+            type,
+            "включена:",
+            category.classList.contains("active")
+        );
+
+    });
+
+});
+
+
+/* ПОИСК */
+
+const search = document.getElementById("search");
+
+search.addEventListener("input", () => {
+
+    const value = search.value.trim();
+
+    console.log("Поиск:", value);
+
+});
+
+
+/* НИЖНЕЕ МЕНЮ */
+
+document.querySelectorAll(".nav-item").forEach(item => {
+
+    item.addEventListener("click", () => {
+
+        document
+            .querySelectorAll(".nav-item")
+            .forEach(x => x.classList.remove("active"));
+
+        item.classList.add("active");
+
+        console.log(
+            "Открыта вкладка:",
+            item.dataset.tab
+        );
+
+    });
+
+});
+
+
+/* TELEGRAM MINI APP */
+
+if (window.Telegram && Telegram.WebApp) {
+
+    Telegram.WebApp.ready();
+
+    Telegram.WebApp.expand();
+
+}
+
+</script>
+
 </body>
 </html>
