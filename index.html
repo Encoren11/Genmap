@@ -1,488 +1,1010 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport"
-      content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 
-<title>Teyvat Interactive Map</title>
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width,
+    initial-scale=1,
+    maximum-scale=1,
+    user-scalable=no"
+>
+
+<title>Teyvat Map</title>
 
 <style>
+
 *{
     box-sizing:border-box;
     -webkit-tap-highlight-color:transparent;
 }
 
-html,body{
+html,
+body{
+
     margin:0;
     width:100%;
     height:100%;
+
     overflow:hidden;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
     background:#10141b;
     color:#fff;
-    font-family:Arial,sans-serif;
 }
 
-button,input{
-    font:inherit;
-}
 
-button{
-    cursor:pointer;
-}
+/* =========================
+   MAP
+========================= */
 
 #map{
+
     position:fixed;
     inset:0;
+
     z-index:1;
 }
 
 #map iframe{
+
     width:100%;
     height:100%;
+
     border:0;
 }
 
-.top{
+
+/* =========================
+   TOP BAR
+========================= */
+
+.topbar{
+
     position:fixed;
-    z-index:20;
+
     top:10px;
     left:10px;
     right:10px;
+
+    z-index:50;
+
     display:flex;
+
     gap:8px;
 }
+
 
 .search{
+
     flex:1;
+
     height:48px;
+
     display:flex;
     align-items:center;
+
     gap:8px;
+
     padding:0 14px;
+
     border-radius:15px;
-    background:rgba(20,24,32,.96);
-    border:1px solid rgba(255,255,255,.1);
+
+    background:
+        rgba(18,22,30,.96);
+
+    border:
+        1px solid
+        rgba(255,255,255,.1);
+
+    box-shadow:
+        0 8px 30px
+        rgba(0,0,0,.25);
 }
+
 
 .search input{
+
     width:100%;
+
     border:0;
     outline:0;
-    color:#fff;
+
     background:transparent;
+
+    color:white;
+
+    font-size:14px;
 }
+
 
 .search input::placeholder{
-    color:#7e8795;
+
+    color:#747d8c;
 }
 
-.top-btn{
+
+.menu-btn{
+
     width:48px;
     height:48px;
-    border:1px solid rgba(255,255,255,.1);
+
+    border:1px solid
+        rgba(255,255,255,.1);
+
     border-radius:15px;
-    background:rgba(20,24,32,.96);
+
+    background:
+        rgba(18,22,30,.96);
+
     color:white;
+
+    font-size:20px;
 }
 
+
+/* =========================
+   SIDE MENU
+========================= */
+
 .sidebar{
+
     position:fixed;
-    z-index:30;
+
+    z-index:40;
+
     top:68px;
     bottom:10px;
     left:10px;
-    width:320px;
-    padding:14px;
+
+    width:330px;
+
     overflow-y:auto;
+
+    padding:14px;
+
     border-radius:20px;
-    background:rgba(18,22,30,.98);
-    border:1px solid rgba(255,255,255,.1);
-    box-shadow:0 15px 50px rgba(0,0,0,.5);
+
+    background:
+        rgba(18,22,30,.98);
+
+    border:
+        1px solid
+        rgba(255,255,255,.1);
+
+    box-shadow:
+        0 20px 60px
+        rgba(0,0,0,.55);
+
     transition:.25s;
 }
 
+
 .sidebar.hidden{
-    transform:translateX(-350px);
+
+    transform:
+        translateX(-360px);
 }
+
+
+/* =========================
+   LOGO
+========================= */
 
 .logo{
+
+    padding:
+        4px 5px
+        14px;
+
     font-size:20px;
+
     font-weight:700;
-    margin-bottom:15px;
 }
 
+
 .logo small{
+
     display:block;
-    color:#7f8897;
-    font-size:10px;
+
     margin-top:4px;
+
+    color:#788292;
+
+    font-size:10px;
+
     font-weight:400;
 }
 
+
+/* =========================
+   FILTER INFO
+========================= */
+
+.filter-info{
+
+    padding:11px;
+
+    margin-bottom:10px;
+
+    border-radius:13px;
+
+    background:
+        rgba(105,132,255,.1);
+
+    border:
+        1px solid
+        rgba(105,132,255,.16);
+
+    font-size:11px;
+
+    color:#aab5ca;
+}
+
+
+.filter-info b{
+
+    color:white;
+}
+
+
+/* =========================
+   SECTION
+========================= */
+
 .section{
-    margin-top:18px;
+
+    margin-top:17px;
     margin-bottom:8px;
-    color:#858e9d;
+
+    color:#7f8999;
+
     font-size:10px;
+
     text-transform:uppercase;
+
     letter-spacing:1px;
 }
 
+
+/* =========================
+   ITEM
+========================= */
+
 .item{
+
     width:100%;
+
     min-height:45px;
+
     display:flex;
     align-items:center;
+
     gap:9px;
+
     margin-bottom:6px;
+
     padding:7px 9px;
-    border:1px solid transparent;
+
     border-radius:12px;
-    background:rgba(255,255,255,.045);
-    color:#fff;
+
+    border:
+        1px solid
+        transparent;
+
+    background:
+        rgba(255,255,255,.045);
+
+    color:white;
+
     text-align:left;
+
+    cursor:pointer;
 }
+
 
 .item:hover{
-    background:rgba(255,255,255,.08);
+
+    background:
+        rgba(255,255,255,.08);
 }
+
 
 .item.active{
-    background:rgba(105,132,255,.18);
-    border-color:rgba(105,132,255,.25);
+
+    background:
+        rgba(105,132,255,.2);
+
+    border:
+        1px solid
+        rgba(105,132,255,.35);
 }
+
 
 .icon{
+
     width:32px;
     height:32px;
+
     flex:none;
+
     display:flex;
+
     align-items:center;
     justify-content:center;
+
     border-radius:9px;
-    background:rgba(255,255,255,.07);
+
+    background:
+        rgba(255,255,255,.07);
+
+    font-size:17px;
 }
 
+
 .item-text{
+
     flex:1;
 }
 
+
 .item-name{
+
     font-size:13px;
+
     font-weight:600;
 }
 
+
 .item-sub{
+
     margin-top:2px;
+
+    color:#737d8d;
+
     font-size:9px;
-    color:#7c8593;
 }
 
-.arrow{
-    color:#737c8b;
+
+.check{
+
+    width:20px;
+
+    color:#7d91ff;
+
+    text-align:center;
+
+    font-size:14px;
 }
+
+
+/* =========================
+   ACTIONS
+========================= */
 
 .action{
+
     width:100%;
+
     min-height:44px;
+
     margin-bottom:7px;
+
     padding:0 12px;
-    border:1px solid rgba(255,255,255,.08);
+
     border-radius:12px;
-    background:rgba(255,255,255,.045);
-    color:#fff;
+
+    border:
+        1px solid
+        rgba(255,255,255,.08);
+
+    background:
+        rgba(255,255,255,.045);
+
+    color:white;
+
     text-align:left;
+
+    cursor:pointer;
 }
 
-.action.primary{
-    background:rgba(105,132,255,.18);
-    border-color:rgba(105,132,255,.3);
+
+.action:hover{
+
+    background:
+        rgba(255,255,255,.08);
 }
 
-.bottom{
-    display:none;
+
+.action.danger{
+
+    color:#ff9c9c;
+
 }
+
+
+/* =========================
+   MODAL
+========================= */
 
 .modal{
+
     position:fixed;
+
     inset:0;
+
     z-index:100;
+
     display:none;
+
     align-items:center;
     justify-content:center;
+
     padding:20px;
-    background:rgba(0,0,0,.65);
+
+    background:
+        rgba(0,0,0,.7);
 }
 
+
 .modal.show{
+
     display:flex;
 }
 
+
 .modal-box{
-    width:min(480px,100%);
+
+    width:
+        min(500px,100%);
+
     max-height:85vh;
+
     overflow:auto;
+
     padding:20px;
+
     border-radius:20px;
+
     background:#191e27;
-    border:1px solid rgba(255,255,255,.1);
+
+    border:
+        1px solid
+        rgba(255,255,255,.1);
+
+    box-shadow:
+        0 20px 70px
+        rgba(0,0,0,.6);
 }
+
 
 .modal-title{
-    font-size:20px;
-    font-weight:bold;
+
     margin-bottom:15px;
+
+    font-size:20px;
+
+    font-weight:700;
 }
+
 
 .close{
+
     float:right;
+
     border:0;
+
     background:none;
+
     color:#aaa;
-    font-size:25px;
+
+    font-size:26px;
+
+    cursor:pointer;
 }
+
+
+/* =========================
+   STATS
+========================= */
 
 .stat{
-    padding:14px;
+
     margin-bottom:8px;
+
+    padding:14px;
+
     border-radius:13px;
-    background:rgba(255,255,255,.05);
+
+    background:
+        rgba(255,255,255,.05);
 }
+
 
 .stat-title{
-    font-weight:bold;
-    margin-bottom:8px;
+
+    margin-bottom:7px;
+
+    font-weight:700;
 }
 
-.bar{
+
+.progress-bar{
+
     height:8px;
+
+    margin-top:8px;
+
     overflow:hidden;
+
     border-radius:10px;
+
     background:#303641;
 }
 
-.bar div{
+
+.progress-bar div{
+
     height:100%;
-    width:0%;
+
     background:#718cff;
+
     transition:.3s;
 }
 
-.percent{
-    margin-top:6px;
-    color:#9ba4b3;
-    font-size:11px;
-}
 
-.note{
+/* =========================
+   NOTES
+========================= */
+
+textarea{
+
     width:100%;
-    min-height:100px;
-    resize:vertical;
+
+    min-height:120px;
+
     padding:12px;
-    border:1px solid rgba(255,255,255,.1);
+
+    resize:vertical;
+
     border-radius:12px;
-    outline:none;
+
+    border:
+        1px solid
+        rgba(255,255,255,.1);
+
+    outline:0;
+
     background:#10141b;
-    color:#fff;
+
+    color:white;
 }
 
-.route{
-    padding:13px;
-    margin-bottom:8px;
-    border-radius:13px;
-    background:rgba(255,255,255,.05);
+
+/* =========================
+   BOTTOM NAV
+========================= */
+
+.bottom{
+
+    position:fixed;
+
+    z-index:60;
+
+    left:10px;
+    right:10px;
+    bottom:10px;
+
+    height:62px;
+
+    display:flex;
+
+    border-radius:18px;
+
+    background:
+        rgba(18,22,30,.98);
+
+    border:
+        1px solid
+        rgba(255,255,255,.1);
+
+    box-shadow:
+        0 10px 40px
+        rgba(0,0,0,.4);
 }
 
-.route b{
-    display:block;
-    margin-bottom:5px;
+
+.bottom button{
+
+    flex:1;
+
+    border:0;
+
+    background:none;
+
+    color:#7c8695;
+
+    font-size:10px;
+
+    cursor:pointer;
 }
 
-.route span{
-    color:#8d96a5;
-    font-size:11px;
+
+.bottom button div{
+
+    margin-bottom:3px;
+
+    font-size:18px;
 }
+
+
+.bottom button.active{
+
+    color:#8da4ff;
+}
+
+
+/* =========================
+   MOBILE
+========================= */
 
 @media(max-width:700px){
 
     .sidebar{
+
+        top:auto;
+
+        bottom:82px;
+
         left:10px;
         right:10px;
-        bottom:78px;
-        top:auto;
+
         width:auto;
-        max-height:72vh;
-        transform:translateY(calc(100% + 100px));
+
+        max-height:70vh;
+
+        transform:
+            translateY(
+                calc(100% + 100px)
+            );
     }
+
 
     .sidebar.open{
-        transform:translateY(0);
+
+        transform:
+            translateY(0);
     }
+
 
     .sidebar.hidden{
-        transform:translateY(calc(100% + 100px));
+
+        transform:
+            translateY(
+                calc(100% + 100px)
+            );
     }
 
-    .bottom{
-        position:fixed;
-        z-index:40;
-        left:10px;
-        right:10px;
-        bottom:10px;
-        height:62px;
-        display:flex;
-        border-radius:18px;
-        background:rgba(18,22,30,.98);
-        border:1px solid rgba(255,255,255,.1);
-    }
-
-    .bottom button{
-        flex:1;
-        border:0;
-        background:none;
-        color:#7d8695;
-        font-size:10px;
-    }
-
-    .bottom button div{
-        font-size:18px;
-        margin-bottom:3px;
-    }
-
-    .bottom button.active{
-        color:#8da4ff;
-    }
 }
+
+
+/* =========================
+   LIGHT THEME
+========================= */
+
+body.light{
+
+    background:#eef1f5;
+
+    color:#111;
+}
+
+body.light .sidebar,
+body.light .search,
+body.light .menu-btn,
+body.light .bottom,
+body.light .modal-box{
+
+    background:#fff;
+
+    color:#111;
+}
+
+
+body.light .item,
+body.light .action{
+
+    background:
+        rgba(0,0,0,.04);
+
+    color:#111;
+}
+
+
+body.light .search input{
+
+    color:#111;
+}
+
+
+body.light .logo small,
+body.light .item-sub{
+
+    color:#7a818c;
+}
+
 </style>
 </head>
 
+
 <body>
 
+
+<!-- =========================
+     MAP
+========================= -->
+
 <div id="map">
+
 <iframe
     id="mapFrame"
-    src="https://genshin-impact-map.appsample.com/location?no_heading=1"
+
+    src="
+    https://genshin-impact-map.appsample.com/location
+    ?no_heading=1
+    "
+
     allowfullscreen>
 </iframe>
-</div>
-
-<div class="top">
-
-    <div class="search">
-        🔎
-        <input id="searchInput"
-               placeholder="Сундук, окулус, фея, руда...">
-    </div>
-
-    <button class="top-btn" id="menuBtn">☰</button>
 
 </div>
 
 
-<aside class="sidebar" id="sidebar">
+<!-- =========================
+     TOP
+========================= -->
+
+<div class="topbar">
+
+<div class="search">
+
+    🔎
+
+    <input
+        id="searchInput"
+        placeholder="
+        Сундук, окулус, фея, руда...
+        "
+    >
+
+</div>
+
+
+<button
+    class="menu-btn"
+    id="menuBtn">
+
+    ☰
+
+</button>
+
+</div>
+
+
+<!-- =========================
+     SIDEBAR
+========================= -->
+
+<aside
+    class="sidebar"
+    id="sidebar">
+
 
 <div class="logo">
+
     🗺️ Teyvat Map
-    <small>Interactive Genshin Impact Map</small>
+
+    <small>
+        Interactive Genshin Impact Map
+    </small>
+
 </div>
 
 
-<div class="section">Основное</div>
+<div
+    class="filter-info"
+    id="filterInfo">
 
-<button class="item active" data-map="ALL">
-    <div class="icon">🌎</div>
-    <div class="item-text">
-        <div class="item-name">Все метки</div>
-        <div class="item-sub">Показать всё</div>
-    </div>
+    Активных фильтров:
+    <b id="filterCount">0</b>
+
+</div>
+
+
+<!-- QUICK -->
+
+<div class="section">
+
+    Быстрые действия
+
+</div>
+
+
+<button
+    class="action"
+    id="allButton">
+
+    🌎 Все метки
+
 </button>
 
 
-<div class="section">Коллекционные предметы</div>
+<button
+    class="action"
+    id="clearButton">
+
+    🧹 Очистить фильтры
+
+</button>
+
+
+<!-- COLLECTION -->
+
+<div class="section">
+
+    Сундуки и коллекционные
+
+</div>
 
 <div id="collectionList"></div>
 
 
-<div class="section">Исследование</div>
+<!-- OCULUS -->
+
+<div class="section">
+
+    Окулусы
+
+</div>
+
+<div id="oculusList"></div>
+
+
+<!-- EXPLORATION -->
+
+<div class="section">
+
+    Исследование
+
+</div>
 
 <div id="explorationList"></div>
 
 
-<div class="section">Материалы</div>
+<!-- MATERIALS -->
+
+<div class="section">
+
+    Материалы
+
+</div>
 
 <div id="materialList"></div>
 
 
-<div class="section">Боссы</div>
+<!-- BOSSES -->
+
+<div class="section">
+
+    Боссы
+
+</div>
 
 <div id="bossList"></div>
 
 
-<div class="section">Головоломки</div>
+<!-- PUZZLES -->
+
+<div class="section">
+
+    Головоломки
+
+</div>
 
 <div id="puzzleList"></div>
 
 
-<div class="section">Инструменты</div>
-
-<button class="action primary" id="progressBtn">
-📊 Прогресс
-</button>
-
-<button class="action" id="favoriteBtn">
-⭐ Избранное
-</button>
-
-<button class="action" id="routeBtn">
-🛣️ Маршруты
-</button>
-
-<button class="action" id="notesBtn">
-📝 Мои заметки
-</button>
-
-<button class="action" id="settingsBtn">
-⚙️ Настройки
-</button>
-
 </aside>
 
 
-<div class="bottom">
+<!-- =========================
+     BOTTOM
+========================= -->
 
-<button id="mapTab" class="active">
+<nav class="bottom">
+
+
+<button
+    id="mapTab"
+    class="active">
+
     <div>🗺️</div>
+
     Карта
+
 </button>
 
-<button id="progressTab">
+
+<button
+    id="progressTab">
+
     <div>📊</div>
+
     Прогресс
+
 </button>
 
-<button id="favoriteTab">
+
+<button
+    id="favoriteTab">
+
     <div>⭐</div>
+
     Избранное
+
 </button>
 
-<button id="settingsTab">
+
+<button
+    id="settingsTab">
+
     <div>⚙️</div>
+
     Настройки
+
 </button>
 
-</div>
+
+</nav>
 
 
-<div class="modal" id="modal">
+<!-- =========================
+     MODAL
+========================= -->
+
+<div
+    class="modal"
+    id="modal">
+
 
 <div class="modal-box">
 
-<button class="close" id="closeModal">×</button>
 
-<div class="modal-title" id="modalTitle"></div>
+<button
+    class="close"
+    id="closeModal">
 
-<div id="modalContent"></div>
+    ×
+
+</button>
+
+
+<div
+    class="modal-title"
+    id="modalTitle">
+</div>
+
+
+<div
+    id="modalContent">
+</div>
+
 
 </div>
 
@@ -491,881 +1013,772 @@ button{
 
 <script>
 
-/* =========================================================
+
+/* =====================================================
    ДАННЫЕ
-========================================================= */
+===================================================== */
 
-const categories = {
+const data = {
 
-    collection: [
+collection:[
 
-        ["Common Chest","📦","Обычные сундуки"],
-        ["Exquisite Chest","💎","Богатые сундуки"],
-        ["Precious Chest","💠","Драгоценные сундуки"],
-        ["Luxurious Chest","👑","Роскошные сундуки"],
-        ["Buried Chest","🏺","Закопанные сундуки"],
-        ["Sealed Chest","🔒","Запечатанные сундуки"],
+["Common Chest","📦","Обычный сундук"],
 
-        ["Anemoculus","🌪️","Анемокулы"],
-        ["Geoculus","🟡","Геокулы"],
-        ["Electroculus","⚡","Электрокулы"],
-        ["Dendroculus","🌿","Дендрокулы"],
-        ["Hydroculus","💧","Гидрокулы"],
-        ["Pyroculus","🔥","Пирокулы"],
-        ["Lunoculus","🌙","Лунокулы"],
+["Exquisite Chest","💎","Богатый сундук"],
 
-        ["Crimson Agate","🔴","Багровые агаты"],
-        ["Spirit Carp","🐟","Карпы духа"]
-    ],
+["Precious Chest","💠","Драгоценный сундук"],
 
-    exploration: [
+["Luxurious Chest","👑","Роскошный сундук"],
 
-        ["Seelie","🧚","Феи"],
-        ["Teleport Waypoint","🌀","Телепорты"],
-        ["Statue of The Seven","🗿","Статуи"],
-        ["World Quests","📜","Мировые квесты"],
-        ["Time Trial Challenge","🎯","Испытания"],
-        ["Viewpoint","👁️","Смотровые точки"],
-        ["Domain","🏛️","Подземелья"]
-    ],
+["Buried Chest","🏺","Закопанный сундук"],
 
-    materials: [
+["Sealed Chest","🔒","Запечатанный сундук"]
 
-        ["White Iron Chunk","⚪","Белое железо"],
-        ["Crystal Chunk","💎","Кристалл"],
-        ["Iron Chunk","⛏️","Железо"],
-        ["Magical Crystal Chunk","🔷","Магический кристалл"],
+],
 
-        ["Dandelion Seed","🌼","Семя одуванчика"],
-        ["Glaze Lily","🌸","Глазурная лилия"],
-        ["Cor Lapis","🟡","Кор ляпис"],
-        ["Wolfhook","🫐","Волчий крюк"],
-        ["Starconch","🐚","Звёздная раковина"],
-        ["Silk Flower","🌺","Шёлковый цветок"]
-    ],
 
-    bosses: [
+oculus:[
 
-        ["Anemo Hypostasis","🌪️","Анемо гипостазис"],
-        ["Cryo Regisvine","❄️","Крио Регисвайн"],
-        ["Cryo Hypostasis","❄️","Крио гипостазис"],
-        ["Maguu Kenki","⚔️","Магу Кэнки"],
-        ["Ruin Serpent","🐍","Змей руин"],
-        ["Geovishap","🪨","Геовишап"]
-    ],
+["Anemoculus","🌪️","Анемокулы"],
 
-    puzzles: [
+["Geoculus","🟡","Геокулы"],
 
-        ["Pressure Plate","⬜","Нажимные плиты"],
-        ["Torch Puzzle","🔥","Факелы"],
-        ["Elemental Monument","🔷","Элементальные монументы"],
-        ["Mini Puzzle","🧩","Мини-головоломки"],
-        ["Light-Up Tile Puzzle","💡","Световые головоломки"]
-    ]
+["Electroculus","⚡","Электрокулы"],
+
+["Dendroculus","🌿","Дендрокулы"],
+
+["Hydroculus","💧","Гидрокулы"],
+
+["Pyroculus","🔥","Пирокулы"],
+
+["Lunoculus","🌙","Лунокулы"]
+
+],
+
+
+exploration:[
+
+["Seelie","🧚","Феи"],
+
+["Teleport Waypoint","🌀","Телепорты"],
+
+["Statue of The Seven","🗿","Статуи"],
+
+["World Quests","📜","Мировые квесты"],
+
+["Time Trial Challenge","🎯","Испытания"],
+
+["Viewpoint","👁️","Смотровые точки"],
+
+["Domain","🏛️","Подземелья"]
+
+],
+
+
+materials:[
+
+["White Iron Chunk","⚪","Белое железо"],
+
+["Crystal Chunk","💎","Кристалл"],
+
+["Iron Chunk","⛏️","Железо"],
+
+["Magical Crystal Chunk","🔷","Магический кристалл"],
+
+["Dandelion Seed","🌼","Семя одуванчика"],
+
+["Glaze Lily","🌸","Глазурная лилия"],
+
+["Cor Lapis","🟡","Кор Ляпис"],
+
+["Wolfhook","🫐","Волчий крюк"],
+
+["Starconch","🐚","Звёздная раковина"],
+
+["Silk Flower","🌺","Шёлковый цветок"]
+
+],
+
+
+bosses:[
+
+["Anemo Hypostasis","🌪️","Анемо гипостазис"],
+
+["Cryo Regisvine","❄️","Крио Регисвайн"],
+
+["Cryo Hypostasis","❄️","Крио гипостазис"],
+
+["Maguu Kenki","⚔️","Магу Кэнки"],
+
+["Ruin Serpent","🐍","Змей руин"],
+
+["Geovishap","🪨","Геовишап"]
+
+],
+
+
+puzzles:[
+
+["Pressure Plate","⬜","Нажимные плиты"],
+
+["Torch Puzzle","🔥","Факелы"],
+
+["Elemental Monument","🔷","Элементальные монументы"],
+
+["Mini Puzzle","🧩","Головоломки"],
+
+["Light-Up Tile Puzzle","💡","Световые плитки"]
+
+]
 
 };
 
 
-/* =========================================================
-   СОСТОЯНИЕ
-========================================================= */
+/* =====================================================
+   STATE
+===================================================== */
 
-let state = JSON.parse(
-    localStorage.getItem("teyvat_state") || "{}"
+let selected =
+JSON.parse(
+    localStorage.getItem(
+        "teyvat_filters"
+    ) || "[]"
 );
 
-if(!state.progress)
-    state.progress = {};
 
-if(!state.favorites)
-    state.favorites = [];
+let favorites =
+JSON.parse(
+    localStorage.getItem(
+        "teyvat_favorites"
+    ) || "[]"
+);
 
-if(!state.notes)
-    state.notes = "";
 
-if(!state.routes)
-    state.routes = [];
+let notes =
+localStorage.getItem(
+    "teyvat_notes"
+) || "";
 
+
+/* =====================================================
+   SAVE
+===================================================== */
 
 function save(){
 
     localStorage.setItem(
-        "teyvat_state",
-        JSON.stringify(state)
+        "teyvat_filters",
+        JSON.stringify(selected)
+    );
+
+    localStorage.setItem(
+        "teyvat_favorites",
+        JSON.stringify(favorites)
+    );
+
+    localStorage.setItem(
+        "teyvat_notes",
+        notes
     );
 
 }
 
 
-/* =========================================================
+/* =====================================================
    MAP
-========================================================= */
+===================================================== */
 
 const frame =
-    document.getElementById("mapFrame");
+document.getElementById(
+    "mapFrame"
+);
 
 
-function showMap(name){
+function updateMap(){
 
-    if(name === "ALL"){
+    if(
+        selected.length === 0
+    ){
 
         frame.src =
-        "https://genshin-impact-map.appsample.com/location?no_heading=1";
+        "https://genshin-impact-map.appsample.com/location?names=__NONE__&no_heading=1";
 
-        return;
+    }else{
+
+        frame.src =
+        "https://genshin-impact-map.appsample.com/location?names="
+        +
+        encodeURIComponent(
+            selected.join(",")
+        )
+        +
+        "&no_heading=1";
+
     }
 
-    frame.src =
-    "https://genshin-impact-map.appsample.com/location?names="
-    + encodeURIComponent(name)
-    + "&no_heading=1";
+
+    document
+    .getElementById(
+        "filterCount"
+    )
+    .innerText =
+        selected.length;
+
+    save();
+
 }
 
 
-/* =========================================================
-   СОЗДАНИЕ СПИСКОВ
-========================================================= */
+/* =====================================================
+   BUTTON STATE
+===================================================== */
 
-function makeList(target,data){
+function updateButtons(){
 
-    const el =
-        document.getElementById(target);
+    document
+    .querySelectorAll(
+        ".item[data-id]"
+    )
+    .forEach(
+        button => {
 
-    data.forEach(item=>{
+            const id =
+                button.dataset.id;
 
-        const [id,icon,name] = item;
+            const active =
+                selected.includes(id);
 
-        const button =
-            document.createElement("button");
-
-        button.className="item";
-
-        button.dataset.map=id;
-
-        button.innerHTML=`
-            <div class="icon">${icon}</div>
-
-            <div class="item-text">
-
-                <div class="item-name">
-                    ${name}
-                </div>
-
-                <div class="item-sub">
-                    ${id}
-                </div>
-
-            </div>
-
-            <div class="arrow">›</div>
-        `;
-
-        button.onclick=()=>{
-
-            document
-            .querySelectorAll(".item")
-            .forEach(x=>
-                x.classList.remove("active")
+            button.classList.toggle(
+                "active",
+                active
             );
 
-            button.classList.add("active");
+            button
+            .querySelector(
+                ".check"
+            )
+            .innerText =
+                active
+                ? "✓"
+                : "";
 
-            showMap(id);
-
-        };
-
-        el.appendChild(button);
-
-    });
+        }
+    );
 
 }
 
 
-makeList(
-    "collectionList",
-    categories.collection
-);
+/* =====================================================
+   CREATE CATEGORY
+===================================================== */
 
-makeList(
-    "explorationList",
-    categories.exploration
-);
+function createList(
+    elementId,
+    items
+){
 
-makeList(
-    "materialList",
-    categories.materials
-);
-
-makeList(
-    "bossList",
-    categories.bosses
-);
-
-makeList(
-    "puzzleList",
-    categories.puzzles
-);
+    const container =
+        document.getElementById(
+            elementId
+        );
 
 
-/* ВСЕ */
+    items.forEach(
+        item => {
 
-document
-.querySelector('[data-map="ALL"]')
-.onclick=()=>{
+            const [
+                id,
+                icon,
+                name
+            ] = item;
 
-    document
-    .querySelectorAll(".item")
-    .forEach(x=>
-        x.classList.remove("active")
+
+            const button =
+                document.createElement(
+                    "button"
+                );
+
+
+            button.className =
+                "item";
+
+
+            button.dataset.id =
+                id;
+
+
+            button.innerHTML = `
+
+                <div class="icon">
+                    ${icon}
+                </div>
+
+                <div class="item-text">
+
+                    <div class="item-name">
+                        ${name}
+                    </div>
+
+                    <div class="item-sub">
+                        ${id}
+                    </div>
+
+                </div>
+
+                <div class="check"></div>
+
+            `;
+
+
+            button.onclick =
+            () => {
+
+                toggleCategory(id);
+
+            };
+
+
+            container.appendChild(
+                button
+            );
+
+        }
     );
 
-    document
-    .querySelector('[data-map="ALL"]')
-    .classList.add("active");
+}
 
-    showMap("ALL");
+
+/* =====================================================
+   TOGGLE CATEGORY
+===================================================== */
+
+function toggleCategory(id){
+
+    if(
+        selected.includes(id)
+    ){
+
+        selected =
+            selected.filter(
+                x => x !== id
+            );
+
+    }else{
+
+        selected.push(id);
+
+    }
+
+
+    updateButtons();
+
+    updateMap();
+
+}
+
+
+/* =====================================================
+   ALL
+===================================================== */
+
+document
+.getElementById(
+    "allButton"
+)
+.onclick = () => {
+
+    selected = [];
+
+    updateButtons();
+
+    updateMap();
 
 };
 
 
-/* =========================================================
-   ПОИСК
-========================================================= */
+/* =====================================================
+   CLEAR
+===================================================== */
+
+document
+.getElementById(
+    "clearButton"
+)
+.onclick = () => {
+
+    selected = [];
+
+    updateButtons();
+
+    updateMap();
+
+};
+
+
+/* =====================================================
+   SEARCH
+===================================================== */
 
 const aliases = {
 
-    "сундук": [
-        "Common Chest",
-        "Exquisite Chest",
-        "Precious Chest",
-        "Luxurious Chest",
-        "Buried Chest",
-        "Sealed Chest"
-    ],
+"сундук":[
 
-    "сундуки": [
-        "Common Chest",
-        "Exquisite Chest",
-        "Precious Chest",
-        "Luxurious Chest",
-        "Buried Chest",
-        "Sealed Chest"
-    ],
+"Common Chest",
+"Exquisite Chest",
+"Precious Chest",
+"Luxurious Chest",
+"Buried Chest",
+"Sealed Chest"
 
-    "окулус": [
-        "Anemoculus",
-        "Geoculus",
-        "Electroculus",
-        "Dendroculus",
-        "Hydroculus",
-        "Pyroculus",
-        "Lunoculus"
-    ],
+],
 
-    "окулусы": [
-        "Anemoculus",
-        "Geoculus",
-        "Electroculus",
-        "Dendroculus",
-        "Hydroculus",
-        "Pyroculus",
-        "Lunoculus"
-    ],
+"сундуки":[
 
-    "фея": ["Seelie"],
-    "феи": ["Seelie"],
+"Common Chest",
+"Exquisite Chest",
+"Precious Chest",
+"Luxurious Chest",
+"Buried Chest",
+"Sealed Chest"
 
-    "телепорт": ["Teleport Waypoint"],
-    "телепорты": ["Teleport Waypoint"],
+],
 
-    "квест": ["World Quests"],
-    "квесты": ["World Quests"],
+"окулус":[
 
-    "испытание": ["Time Trial Challenge"],
-    "испытания": ["Time Trial Challenge"],
+"Anemoculus",
+"Geoculus",
+"Electroculus",
+"Dendroculus",
+"Hydroculus",
+"Pyroculus",
+"Lunoculus"
 
-    "головоломка": ["Mini Puzzle"],
-    "головоломки": ["Mini Puzzle"],
+],
 
-    "факел": ["Torch Puzzle"],
-    "факелы": ["Torch Puzzle"],
+"окулусы":[
 
-    "плита": ["Pressure Plate"],
-    "плиты": ["Pressure Plate"]
+"Anemoculus",
+"Geoculus",
+"Electroculus",
+"Dendroculus",
+"Hydroculus",
+"Pyroculus",
+"Lunoculus"
+
+],
+
+"фея":[
+"Seelie"
+],
+
+"феи":[
+"Seelie"
+],
+
+"телепорт":[
+"Teleport Waypoint"
+],
+
+"телепорты":[
+"Teleport Waypoint"
+],
+
+"квест":[
+"World Quests"
+],
+
+"квесты":[
+"World Quests"
+],
+
+"испытание":[
+"Time Trial Challenge"
+],
+
+"испытания":[
+"Time Trial Challenge"
+],
+
+"головоломка":[
+"Mini Puzzle"
+],
+
+"головоломки":[
+"Mini Puzzle"
+],
+
+"факел":[
+"Torch Puzzle"
+],
+
+"факелы":[
+"Torch Puzzle"
+],
+
+"плита":[
+"Pressure Plate"
+],
+
+"плиты":[
+"Pressure Plate"
+]
+
 };
 
 
 document
-.getElementById("searchInput")
-.addEventListener("keydown",e=>{
+.getElementById(
+    "searchInput"
+)
+.addEventListener(
+    "keydown",
+    event => {
 
-    if(e.key !== "Enter")
-        return;
+        if(
+            event.key !== "Enter"
+        )
+            return;
 
-    const text =
-        e.target.value
-        .trim()
-        .toLowerCase();
 
-    if(!text)
-        return;
+        const text =
+            event.target.value
+            .trim()
+            .toLowerCase();
 
-    let result =
-        aliases[text];
 
-    if(!result){
+        if(!text)
+            return;
 
-        const key =
-            Object.keys(aliases)
-            .find(x =>
-                x.includes(text) ||
-                text.includes(x)
+
+        let result =
+            aliases[text];
+
+
+        if(!result){
+
+            const key =
+                Object.keys(
+                    aliases
+                )
+                .find(
+                    key =>
+                        key.includes(text)
+                        ||
+                        text.includes(key)
+                );
+
+
+            if(key)
+                result =
+                    aliases[key];
+
+        }
+
+
+        if(!result){
+
+            alert(
+                "Ничего не найдено"
             );
 
-        if(key)
-            result=aliases[key];
+            return;
+
+        }
+
+
+        selected =
+            [...result];
+
+
+        updateButtons();
+
+        updateMap();
 
     }
-
-    if(!result){
-
-        alert("Ничего не найдено");
-
-        return;
-    }
-
-    /*
-       Если найдено несколько типов,
-       AppSample принимает их через запятую.
-    */
-
-    frame.src =
-        "https://genshin-impact-map.appsample.com/location?names="
-        + encodeURIComponent(result.join(","))
-        + "&no_heading=1";
-
-});
+);
 
 
-/* =========================================================
+/* =====================================================
    MODAL
-========================================================= */
+===================================================== */
 
 const modal =
-    document.getElementById("modal");
+document.getElementById(
+    "modal"
+);
+
 
 const modalTitle =
-    document.getElementById("modalTitle");
+document.getElementById(
+    "modalTitle"
+);
+
 
 const modalContent =
-    document.getElementById("modalContent");
+document.getElementById(
+    "modalContent"
+);
 
 
-function openModal(title,content){
+function openModal(
+    title,
+    content
+){
 
-    modalTitle.innerText=title;
+    modalTitle.innerText =
+        title;
 
-    modalContent.innerHTML=content;
+    modalContent.innerHTML =
+        content;
 
-    modal.classList.add("show");
+    modal.classList.add(
+        "show"
+    );
 
 }
 
 
 function closeModal(){
 
-    modal.classList.remove("show");
+    modal.classList.remove(
+        "show"
+    );
 
 }
 
 
 document
-.getElementById("closeModal")
-.onclick=closeModal;
+.getElementById(
+    "closeModal"
+)
+.onclick =
+    closeModal;
 
 
-modal.onclick=e=>{
+modal.onclick =
+event => {
 
-    if(e.target===modal)
+    if(
+        event.target === modal
+    )
         closeModal();
 
 };
 
 
-/* =========================================================
-   ПРОГРЕСС
-========================================================= */
-
-const progressNames = {
-
-    "Common Chest":"Обычные сундуки",
-    "Exquisite Chest":"Богатые сундуки",
-    "Precious Chest":"Драгоценные сундуки",
-    "Luxurious Chest":"Роскошные сундуки",
-
-    "Anemoculus":"Анемокулы",
-    "Geoculus":"Геокулы",
-    "Electroculus":"Электрокулы",
-    "Dendroculus":"Дендрокулы",
-    "Hydroculus":"Гидрокулы",
-    "Pyroculus":"Пирокулы",
-    "Lunoculus":"Лунокулы",
-
-    "Seelie":"Феи",
-    "World Quests":"Квесты"
-};
-
-
-function progressWindow(){
-
-    let html="";
-
-    Object.keys(progressNames)
-    .forEach(id=>{
-
-        const value =
-            Number(state.progress[id] || 0);
-
-        const total =
-            Number(
-                promptTotals[id] || 0
-            );
-
-        let percent=0;
-
-        if(total)
-            percent=
-                Math.min(
-                    100,
-                    Math.round(value/total*100)
-                );
-
-        html+=`
-
-        <div class="stat">
-
-            <div class="stat-title">
-                ${progressNames[id]}
-            </div>
-
-            <div>
-                ${value} / ${total || "?"}
-            </div>
-
-            <div class="bar">
-                <div style="width:${percent}%"></div>
-            </div>
-
-            <div class="percent">
-                ${total ? percent+"%" : "Количество можно указать позже"}
-            </div>
-
-        </div>
-
-        `;
-
-    });
-
-
-    html+=`
-
-    <button class="action primary"
-            onclick="changeProgress()">
-
-        ✏️ Изменить прогресс
-
-    </button>
-
-    <button class="action"
-            onclick="resetProgress()">
-
-        🔄 Сбросить прогресс
-
-    </button>
-
-    `;
-
-
-    openModal(
-        "📊 Прогресс",
-        html
-    );
-
-}
-
-
-/*
-   Количество точек специально вынесено отдельно.
-   Его можно заменить актуальными числами,
-   когда подключим собственные данные.
-*/
-
-const promptTotals={
-
-    "Common Chest":0,
-    "Exquisite Chest":0,
-    "Precious Chest":0,
-    "Luxurious Chest":0,
-
-    "Anemoculus":54,
-    "Geoculus":131,
-    "Electroculus":181,
-    "Dendroculus":271,
-    "Hydroculus":225,
-    "Pyroculus":249,
-    "Lunoculus":197,
-
-    "Seelie":0,
-    "World Quests":0
-};
-
-
-function changeProgress(){
-
-    const id =
-        prompt(
-            "Введите ID категории:\n\n"
-            +Object.entries(progressNames)
-            .map(x=>x[0]+" — "+x[1])
-            .join("\n")
-        );
-
-    if(!id || !progressNames[id])
-        return;
-
-    const value =
-        Number(
-            prompt(
-                "Сколько собрано?"
-            )
-        );
-
-    if(
-        !Number.isNaN(value) &&
-        value>=0
-    ){
-
-        state.progress[id]=value;
-
-        save();
-
-        progressWindow();
-
-    }
-
-}
-
-
-function resetProgress(){
-
-    if(!confirm(
-        "Сбросить весь прогресс?"
-    ))
-        return;
-
-    state.progress={};
-
-    save();
-
-    progressWindow();
-
-}
-
+/* =====================================================
+   PROGRESS
+===================================================== */
 
 document
-.getElementById("progressBtn")
-.onclick=progressWindow;
+.getElementById(
+    "progressTab"
+)
+.onclick =
+    () => {
 
-document
-.getElementById("progressTab")
-.onclick=progressWindow;
+        openModal(
 
+            "📊 Прогресс",
 
-/* =========================================================
-   ИЗБРАННОЕ
-========================================================= */
-
-function favoriteWindow(){
-
-    let html="";
-
-    if(!state.favorites.length){
-
-        html=`
-        <div class="stat">
-            Пока ничего нет.
-        </div>
-        `;
-
-    }else{
-
-        state.favorites.forEach((x,i)=>{
-
-            html+=`
+            `
 
             <div class="stat">
 
-                ⭐ ${x}
+                <div class="stat-title">
+                    Активные категории
+                </div>
 
-                <button
-                    class="action"
-                    onclick="removeFavorite(${i})">
-
-                    Удалить
-
-                </button>
+                ${selected.length}
 
             </div>
 
-            `;
 
-        });
+            <div class="stat">
 
-    }
+                <div class="stat-title">
+                    Что будет дальше
+                </div>
 
-    html+=`
+                После подключения
+                собственных ID маркеров
+                здесь появится настоящий
+                прогресс:
 
-    <button
-        class="action primary"
-        onclick="addFavorite()">
+                <br><br>
 
-        ➕ Добавить категорию
+                💎 Сундуки
+                <br>
+                🌪️ Окулусы
+                <br>
+                🧚 Феи
+                <br>
+                🧩 Головоломки
 
-    </button>
+            </div>
 
-    `;
+            `
 
-    openModal(
-        "⭐ Избранное",
-        html
-    );
-
-}
-
-
-function addFavorite(){
-
-    const value =
-        prompt(
-            "Что добавить в избранное?"
         );
 
-    if(!value)
-        return;
-
-    if(!state.favorites.includes(value))
-        state.favorites.push(value);
-
-    save();
-
-    favoriteWindow();
-
-}
+    };
 
 
-function removeFavorite(i){
-
-    state.favorites.splice(i,1);
-
-    save();
-
-    favoriteWindow();
-
-}
-
+/* =====================================================
+   FAVORITES
+===================================================== */
 
 document
-.getElementById("favoriteBtn")
-.onclick=favoriteWindow;
+.getElementById(
+    "favoriteTab"
+)
+.onclick =
+    () => {
 
-document
-.getElementById("favoriteTab")
-.onclick=favoriteWindow;
+        openModal(
 
+            "⭐ Избранное",
 
-/* =========================================================
-   МАРШРУТЫ
-========================================================= */
+            `
 
-function routeWindow(){
+            <div class="stat">
 
-    let html="";
+                Здесь будут
+                сохранённые точки.
 
-    if(!state.routes.length){
+                <br><br>
 
-        html=`
-
-        <div class="stat">
-
-            Маршрутов пока нет.
-
-        </div>
-
-        `;
-
-    }else{
-
-        state.routes.forEach((r,i)=>{
-
-            html+=`
-
-            <div class="route">
-
-                <b>🛣️ ${r.name}</b>
-
-                <span>
-                    ${r.description}
-                </span>
-
-                <button
-                    class="action"
-                    onclick="deleteRoute(${i})">
-
-                    Удалить
-
-                </button>
+                После подключения
+                ID маркеров можно будет
+                добавлять конкретные
+                сундуки, окулусы,
+                головоломки и т.д.
 
             </div>
 
-            `;
+            `
 
-        });
+        );
 
-    }
-
-
-    html+=`
-
-    <button
-        class="action primary"
-        onclick="addRoute()">
-
-        ➕ Новый маршрут
-
-    </button>
-
-    `;
+    };
 
 
-    openModal(
-        "🛣️ Маршруты",
-        html
-    );
-
-}
-
-
-function addRoute(){
-
-    const name =
-        prompt("Название маршрута:");
-
-    if(!name)
-        return;
-
-    const description =
-        prompt(
-            "Что собирать по маршруту?"
-        ) || "";
-
-    state.routes.push({
-        name,
-        description
-    });
-
-    save();
-
-    routeWindow();
-
-}
-
-
-function deleteRoute(i){
-
-    state.routes.splice(i,1);
-
-    save();
-
-    routeWindow();
-
-}
-
+/* =====================================================
+   SETTINGS
+===================================================== */
 
 document
-.getElementById("routeBtn")
-.onclick=routeWindow;
+.getElementById(
+    "settingsTab"
+)
+.onclick =
+    showSettings;
 
 
-/* =========================================================
-   ЗАМЕТКИ
-========================================================= */
-
-function notesWindow(){
-
-    openModal(
-        "📝 Мои заметки",
-
-        `
-
-        <textarea
-            class="note"
-            id="notesArea"
-            placeholder="Например: сначала активировать механизм возле телепорта...">${escapeHtml(state.notes)}</textarea>
-
-        <br><br>
-
-        <button
-            class="action primary"
-            onclick="saveNotes()">
-
-            💾 Сохранить
-
-        </button>
-
-        `
-    );
-
-}
-
-
-function saveNotes(){
-
-    state.notes =
-        document
-        .getElementById("notesArea")
-        .value;
-
-    save();
-
-    closeModal();
-
-}
-
-
-function escapeHtml(text){
-
-    return text
-        .replaceAll("&","&amp;")
-        .replaceAll("<","&lt;")
-        .replaceAll(">","&gt;")
-        .replaceAll('"',"&quot;")
-        .replaceAll("'","&#039;");
-
-}
-
-
-document
-.getElementById("notesBtn")
-.onclick=notesWindow;
-
-
-/* =========================================================
-   НАСТРОЙКИ
-========================================================= */
-
-function settingsWindow(){
+function showSettings(){
 
     openModal(
+
         "⚙️ Настройки",
 
         `
@@ -1383,108 +1796,196 @@ function settingsWindow(){
 
         <button
             class="action"
-            onclick="toggleCompact()">
+            onclick="toggleTheme()">
 
-            📱 Переключить компактный режим
+            🌙 Сменить тему
 
         </button>
 
 
         <button
             class="action"
-            onclick="clearEverything()">
+            onclick="resetFilters()">
 
-            🗑️ Очистить все данные
+            🔄 Сбросить фильтры
+
+        </button>
+
+
+        <button
+            class="action danger"
+            onclick="clearData()">
+
+            🗑️ Очистить данные
 
         </button>
 
         `
+
     );
 
 }
 
 
-function toggleCompact(){
+/* =====================================================
+   THEME
+===================================================== */
+
+function toggleTheme(){
 
     document
-    .querySelector(".sidebar")
-    .classList.toggle("hidden");
+    .body
+    .classList
+    .toggle(
+        "light"
+    );
 
 }
 
 
-function clearEverything(){
+/* =====================================================
+   RESET FILTERS
+===================================================== */
 
-    if(!confirm(
-        "Удалить весь сохранённый прогресс, избранное и заметки?"
-    ))
+function resetFilters(){
+
+    selected = [];
+
+    updateButtons();
+
+    updateMap();
+
+    closeModal();
+
+}
+
+
+/* =====================================================
+   CLEAR DATA
+===================================================== */
+
+function clearData(){
+
+    if(
+        !confirm(
+            "Удалить все сохранённые данные?"
+        )
+    )
         return;
 
-    localStorage.removeItem(
-        "teyvat_state"
-    );
+
+    localStorage.clear();
 
     location.reload();
 
 }
 
 
-document
-.getElementById("settingsBtn")
-.onclick=settingsWindow;
-
-document
-.getElementById("settingsTab")
-.onclick=settingsWindow;
-
-
-/* =========================================================
-   МОБИЛЬНОЕ МЕНЮ
-========================================================= */
+/* =====================================================
+   MOBILE MENU
+===================================================== */
 
 const sidebar =
-    document.getElementById("sidebar");
+document.getElementById(
+    "sidebar"
+);
 
 
 document
-.getElementById("menuBtn")
-.onclick=()=>{
+.getElementById(
+    "menuBtn"
+)
+.onclick = () => {
 
-    if(innerWidth<=700){
+    if(
+        innerWidth <= 700
+    ){
 
         sidebar
         .classList
-        .toggle("open");
+        .toggle(
+            "open"
+        );
 
     }else{
 
         sidebar
         .classList
-        .toggle("hidden");
+        .toggle(
+            "hidden"
+        );
 
     }
 
 };
 
 
+/* =====================================================
+   MAP TAB
+===================================================== */
+
 document
-.getElementById("mapTab")
-.onclick=()=>{
+.getElementById(
+    "mapTab"
+)
+.onclick = () => {
 
     sidebar
     .classList
-    .remove("open");
+    .remove(
+        "open"
+    );
 
 };
 
 
-/* =========================================================
-   ЗАПУСК
-========================================================= */
+/* =====================================================
+   BUILD
+===================================================== */
 
-console.log(
-    "Teyvat Map loaded"
+createList(
+    "collectionList",
+    data.collection
 );
+
+
+createList(
+    "oculusList",
+    data.oculus
+);
+
+
+createList(
+    "explorationList",
+    data.exploration
+);
+
+
+createList(
+    "materialList",
+    data.materials
+);
+
+
+createList(
+    "bossList",
+    data.bosses
+);
+
+
+createList(
+    "puzzleList",
+    data.puzzles
+);
+
+
+/* =====================================================
+   START
+===================================================== */
+
+updateButtons();
+
+updateMap();
 
 </script>
 
