@@ -2,313 +2,357 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="viewport"
+      content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 
-<title>Teyvat Map</title>
+<title>Teyvat Interactive Map</title>
 
 <style>
 *{
-box-sizing:border-box;
--webkit-tap-highlight-color:transparent
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
 }
 
 html,body{
-margin:0;
-width:100%;
-height:100%;
-overflow:hidden;
-background:#11151c;
-font-family:Arial,sans-serif;
-color:#fff
+    margin:0;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:#10141b;
+    color:#fff;
+    font-family:Arial,sans-serif;
+}
+
+button,input{
+    font:inherit;
+}
+
+button{
+    cursor:pointer;
 }
 
 #map{
-position:fixed;
-inset:0;
-z-index:1
+    position:fixed;
+    inset:0;
+    z-index:1;
 }
 
 #map iframe{
-width:100%;
-height:100%;
-border:0;
-display:block
+    width:100%;
+    height:100%;
+    border:0;
 }
 
 .top{
-position:fixed;
-top:10px;
-left:10px;
-right:10px;
-z-index:20;
-display:flex;
-gap:8px
+    position:fixed;
+    z-index:20;
+    top:10px;
+    left:10px;
+    right:10px;
+    display:flex;
+    gap:8px;
 }
 
 .search{
-height:48px;
-flex:1;
-display:flex;
-align-items:center;
-padding:0 14px;
-background:rgba(20,24,32,.96);
-border:1px solid rgba(255,255,255,.1);
-border-radius:15px
-}
-
-.search span{
-margin-right:8px
+    flex:1;
+    height:48px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:0 14px;
+    border-radius:15px;
+    background:rgba(20,24,32,.96);
+    border:1px solid rgba(255,255,255,.1);
 }
 
 .search input{
-width:100%;
-border:0;
-outline:0;
-background:transparent;
-color:white;
-font-size:14px
+    width:100%;
+    border:0;
+    outline:0;
+    color:#fff;
+    background:transparent;
 }
 
 .search input::placeholder{
-color:#858c9a
+    color:#7e8795;
 }
 
-.menu{
-width:48px;
-height:48px;
-border:1px solid rgba(255,255,255,.1);
-border-radius:15px;
-background:rgba(20,24,32,.96);
-color:white;
-font-size:20px
+.top-btn{
+    width:48px;
+    height:48px;
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:15px;
+    background:rgba(20,24,32,.96);
+    color:white;
 }
 
-.panel{
-position:fixed;
-left:10px;
-top:70px;
-bottom:10px;
-width:310px;
-z-index:15;
-padding:14px;
-overflow-y:auto;
-background:rgba(18,22,30,.97);
-border:1px solid rgba(255,255,255,.1);
-border-radius:20px;
-box-shadow:0 15px 50px rgba(0,0,0,.55);
-transition:.25s
+.sidebar{
+    position:fixed;
+    z-index:30;
+    top:68px;
+    bottom:10px;
+    left:10px;
+    width:320px;
+    padding:14px;
+    overflow-y:auto;
+    border-radius:20px;
+    background:rgba(18,22,30,.98);
+    border:1px solid rgba(255,255,255,.1);
+    box-shadow:0 15px 50px rgba(0,0,0,.5);
+    transition:.25s;
 }
 
-.panel.hide{
-transform:translateX(-340px)
+.sidebar.hidden{
+    transform:translateX(-350px);
 }
 
 .logo{
-font-size:20px;
-font-weight:bold;
-margin-bottom:15px
+    font-size:20px;
+    font-weight:700;
+    margin-bottom:15px;
 }
 
-.title{
-margin:16px 0 8px;
-font-size:10px;
-color:#8d95a4;
-text-transform:uppercase;
-letter-spacing:1px
+.logo small{
+    display:block;
+    color:#7f8897;
+    font-size:10px;
+    margin-top:4px;
+    font-weight:400;
 }
 
-.category{
-width:100%;
-min-height:48px;
-display:flex;
-align-items:center;
-margin-bottom:6px;
-padding:7px 9px;
-border:0;
-border-radius:12px;
-background:rgba(255,255,255,.045);
-color:#fff;
-text-align:left
+.section{
+    margin-top:18px;
+    margin-bottom:8px;
+    color:#858e9d;
+    font-size:10px;
+    text-transform:uppercase;
+    letter-spacing:1px;
 }
 
-.category.active{
-background:rgba(113,140,255,.16)
+.item{
+    width:100%;
+    min-height:45px;
+    display:flex;
+    align-items:center;
+    gap:9px;
+    margin-bottom:6px;
+    padding:7px 9px;
+    border:1px solid transparent;
+    border-radius:12px;
+    background:rgba(255,255,255,.045);
+    color:#fff;
+    text-align:left;
 }
 
-.category-icon{
-width:34px;
-height:34px;
-display:flex;
-align-items:center;
-justify-content:center;
-margin-right:9px;
-border-radius:9px;
-background:rgba(255,255,255,.07);
-font-size:17px
+.item:hover{
+    background:rgba(255,255,255,.08);
 }
 
-.category-info{
-flex:1
+.item.active{
+    background:rgba(105,132,255,.18);
+    border-color:rgba(105,132,255,.25);
 }
 
-.category-name{
-font-size:13px;
-font-weight:bold
+.icon{
+    width:32px;
+    height:32px;
+    flex:none;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:9px;
+    background:rgba(255,255,255,.07);
 }
 
-.category-desc{
-font-size:9px;
-color:#777f8d;
-margin-top:2px
+.item-text{
+    flex:1;
 }
 
-.switch{
-width:40px;
-height:23px;
-position:relative;
-border-radius:20px;
-background:#383e49
+.item-name{
+    font-size:13px;
+    font-weight:600;
 }
 
-.switch:after{
-content:"";
-position:absolute;
-left:3px;
-top:3px;
-width:17px;
-height:17px;
-border-radius:50%;
-background:#fff;
-transition:.2s
+.item-sub{
+    margin-top:2px;
+    font-size:9px;
+    color:#7c8593;
 }
 
-.category.active .switch{
-background:#718cff
-}
-
-.category.active .switch:after{
-transform:translateX(17px)
+.arrow{
+    color:#737c8b;
 }
 
 .action{
-width:100%;
-height:44px;
-margin-bottom:7px;
-border:1px solid rgba(255,255,255,.08);
-border-radius:12px;
-background:rgba(255,255,255,.045);
-color:#fff;
-text-align:left;
-padding:0 13px;
-font-size:13px
+    width:100%;
+    min-height:44px;
+    margin-bottom:7px;
+    padding:0 12px;
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:12px;
+    background:rgba(255,255,255,.045);
+    color:#fff;
+    text-align:left;
 }
 
 .action.primary{
-background:rgba(113,140,255,.2);
-border-color:rgba(113,140,255,.35)
+    background:rgba(105,132,255,.18);
+    border-color:rgba(105,132,255,.3);
 }
 
 .bottom{
-display:none;
-position:fixed;
-left:10px;
-right:10px;
-bottom:10px;
-height:64px;
-z-index:30;
-background:rgba(18,22,30,.97);
-border:1px solid rgba(255,255,255,.1);
-border-radius:18px
-}
-
-.bottom button{
-width:25%;
-height:100%;
-border:0;
-background:transparent;
-color:#777f8d;
-font-size:10px
-}
-
-.bottom button div{
-font-size:19px;
-margin-bottom:3px
-}
-
-.bottom button.active{
-color:#8ca6ff
+    display:none;
 }
 
 .modal{
-display:none;
-position:fixed;
-inset:0;
-z-index:100;
-align-items:center;
-justify-content:center;
-padding:20px;
-background:rgba(0,0,0,.65)
+    position:fixed;
+    inset:0;
+    z-index:100;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    background:rgba(0,0,0,.65);
 }
 
 .modal.show{
-display:flex
+    display:flex;
 }
 
 .modal-box{
-width:min(430px,100%);
-max-height:80vh;
-overflow:auto;
-padding:20px;
-border-radius:20px;
-background:#191e27;
-border:1px solid rgba(255,255,255,.1)
+    width:min(480px,100%);
+    max-height:85vh;
+    overflow:auto;
+    padding:20px;
+    border-radius:20px;
+    background:#191e27;
+    border:1px solid rgba(255,255,255,.1);
 }
 
 .modal-title{
-font-size:19px;
-font-weight:bold;
-margin-bottom:15px
+    font-size:20px;
+    font-weight:bold;
+    margin-bottom:15px;
 }
 
 .close{
-float:right;
-border:0;
-background:none;
-color:#aaa;
-font-size:24px
+    float:right;
+    border:0;
+    background:none;
+    color:#aaa;
+    font-size:25px;
 }
 
-.modal-item{
-padding:13px;
-margin:7px 0;
-border-radius:11px;
-background:rgba(255,255,255,.05)
+.stat{
+    padding:14px;
+    margin-bottom:8px;
+    border-radius:13px;
+    background:rgba(255,255,255,.05);
+}
+
+.stat-title{
+    font-weight:bold;
+    margin-bottom:8px;
+}
+
+.bar{
+    height:8px;
+    overflow:hidden;
+    border-radius:10px;
+    background:#303641;
+}
+
+.bar div{
+    height:100%;
+    width:0%;
+    background:#718cff;
+    transition:.3s;
+}
+
+.percent{
+    margin-top:6px;
+    color:#9ba4b3;
+    font-size:11px;
+}
+
+.note{
+    width:100%;
+    min-height:100px;
+    resize:vertical;
+    padding:12px;
+    border:1px solid rgba(255,255,255,.1);
+    border-radius:12px;
+    outline:none;
+    background:#10141b;
+    color:#fff;
+}
+
+.route{
+    padding:13px;
+    margin-bottom:8px;
+    border-radius:13px;
+    background:rgba(255,255,255,.05);
+}
+
+.route b{
+    display:block;
+    margin-bottom:5px;
+}
+
+.route span{
+    color:#8d96a5;
+    font-size:11px;
 }
 
 @media(max-width:700px){
 
-.panel{
-left:10px;
-right:10px;
-top:auto;
-bottom:80px;
-width:auto;
-max-height:70vh;
-transform:translateY(calc(100% + 100px))
-}
+    .sidebar{
+        left:10px;
+        right:10px;
+        bottom:78px;
+        top:auto;
+        width:auto;
+        max-height:72vh;
+        transform:translateY(calc(100% + 100px));
+    }
 
-.panel.open{
-transform:translateY(0)
-}
+    .sidebar.open{
+        transform:translateY(0);
+    }
 
-.panel.hide{
-transform:translateY(calc(100% + 100px))
-}
+    .sidebar.hidden{
+        transform:translateY(calc(100% + 100px));
+    }
 
-.bottom{
-display:flex
-}
+    .bottom{
+        position:fixed;
+        z-index:40;
+        left:10px;
+        right:10px;
+        bottom:10px;
+        height:62px;
+        display:flex;
+        border-radius:18px;
+        background:rgba(18,22,30,.98);
+        border:1px solid rgba(255,255,255,.1);
+    }
 
+    .bottom button{
+        flex:1;
+        border:0;
+        background:none;
+        color:#7d8695;
+        font-size:10px;
+    }
+
+    .bottom button div{
+        font-size:18px;
+        margin-bottom:3px;
+    }
+
+    .bottom button.active{
+        color:#8da4ff;
+    }
 }
 </style>
 </head>
@@ -317,284 +361,114 @@ display:flex
 
 <div id="map">
 <iframe
-id="mapFrame"
-src="https://genshin-impact-map.appsample.com/location?no_heading=1"
-allowfullscreen>
+    id="mapFrame"
+    src="https://genshin-impact-map.appsample.com/location?no_heading=1"
+    allowfullscreen>
 </iframe>
 </div>
 
 <div class="top">
 
-<div class="search">
-<span>🔎</span>
-<input id="search" placeholder="Поиск...">
-</div>
+    <div class="search">
+        🔎
+        <input id="searchInput"
+               placeholder="Сундук, окулус, фея, руда...">
+    </div>
 
-<button class="menu" id="menu">☰</button>
+    <button class="top-btn" id="menuBtn">☰</button>
 
-</div>
-
-
-<div class="panel" id="panel">
-
-<div class="logo">🗺️ Teyvat Map</div>
-
-<div class="title">Метки</div>
-
-
-<div class="category active" data-name="Common Chest">
-<div class="category-icon">📦</div>
-<div class="category-info">
-<div class="category-name">Обычный сундук</div>
-<div class="category-desc">Common Chest</div>
-</div>
-<div class="switch"></div>
 </div>
 
 
-<div class="category active" data-name="Exquisite Chest">
-<div class="category-icon">💎</div>
-<div class="category-info">
-<div class="category-name">Богатый сундук</div>
-<div class="category-desc">Exquisite Chest</div>
-</div>
-<div class="switch"></div>
+<aside class="sidebar" id="sidebar">
+
+<div class="logo">
+    🗺️ Teyvat Map
+    <small>Interactive Genshin Impact Map</small>
 </div>
 
 
-<div class="category active" data-name="Precious Chest">
-<div class="category-icon">💠</div>
-<div class="category-info">
-<div class="category-name">Драгоценный сундук</div>
-<div class="category-desc">Precious Chest</div>
-</div>
-<div class="switch"></div>
-</div>
+<div class="section">Основное</div>
 
-
-<div class="category active" data-name="Luxurious Chest">
-<div class="category-icon">👑</div>
-<div class="category-info">
-<div class="category-name">Роскошный сундук</div>
-<div class="category-desc">Luxurious Chest</div>
-</div>
-<div class="switch"></div>
-</div>
-
-
-<div class="category active" data-name="Buried Chest">
-<div class="category-icon">🏺</div>
-<div class="category-info">
-<div class="category-name">Закопанный сундук</div>
-<div class="category-desc">Buried Chest</div>
-</div>
-<div class="switch"></div>
-</div>
-
-
-<div class="category active" data-name="Sealed Chest">
-<div class="category-icon">🔒</div>
-<div class="category-info">
-<div class="category-name">Запечатанный сундук</div>
-<div class="category-desc">Sealed Chest</div>
-</div>
-<div class="switch"></div>
-</div>
-
-
-<div class="category active" data-name="Seelie">
-<div class="category-icon">🧚</div>
-<div class="category-info">
-<div class="category-name">Феи</div>
-<div class="category-desc">Seelie</div>
-</div>
-<div class="switch"></div>
-</div>
-
-
-<div class="category active" data-name="Anemoculus">
-<div class="category-icon">🌪️</div>
-<div class="category-info">
-<div class="category-name">Анемокулы</div>
-<div class="category-desc">Anemoculus</div>
-</div>
-<div class="switch"></div>
-</div>
-
-
-<div class="category active" data-name="Geoculus">
-<div class="category-icon">🟡</div>
-<div class="category-info">
-<div class="category-name">Геокулы</div>
-<div class="category-desc">Geoculus</div>
-</div>
-<div class="switch"></div>
-</div>
-
-
-<div class="category active" data-name="Electroculus">
-<div class="category-icon">⚡</div>
-<div class="category-info">
-<div class="category-name">Электрокулы</div>
-<div class="category-desc">Electroculus</div>
-</div>
-<div class="switch"></div>
-</div>
-
-
-<div class="category active" data-name="Dendroculus">
-<div class="category-icon">🌿</div>
-<div class="category-info">
-<div class="category-name">Дендрокулы</div>
-<div class="category-desc">Dendroculus</div>
-</div>
-<div class="switch"></div>
-</div>
-
-
-<div class="category active" data-name="Teleport Waypoint">
-<div class="category-icon">🌀</div>
-<div class="category-info">
-<div class="category-name">Телепорты</div>
-<div class="category-desc">Teleport Waypoint</div>
-</div>
-<div class="switch"></div>
-</div>
-
-
-<div class="category active" data-name="Statue of The Seven">
-<div class="category-icon">🗿</div>
-<div class="category-info">
-<div class="category-name">Статуи</div>
-<div class="category-desc">Statue of The Seven</div>
-</div>
-<div class="switch"></div>
-</div>
-
-
-<div class="category active" data-name="World Quests">
-<div class="category-icon">📜</div>
-<div class="category-info">
-<div class="category-name">Квесты</div>
-<div class="category-desc">World Quests</div>
-</div>
-<div class="switch"></div>
-</div>
-
-
-<div class="category active" data-name="Time Trial Challenge">
-<div class="category-icon">🎯</div>
-<div class="category-info">
-<div class="category-name">Испытания</div>
-<div class="category-desc">Time Trial Challenge</div>
-</div>
-<div class="switch"></div>
-</div>
-
-
-<div class="category active" data-name="Pressure Plate">
-<div class="category-icon">🧩</div>
-<div class="category-info">
-<div class="category-name">Плиты</div>
-<div class="category-desc">Pressure Plate</div>
-</div>
-<div class="switch"></div>
-</div>
-
-
-<div class="category active" data-name="Torch Puzzle">
-<div class="category-icon">🔥</div>
-<div class="category-info">
-<div class="category-name">Факелы</div>
-<div class="category-desc">Torch Puzzle</div>
-</div>
-<div class="switch"></div>
-</div>
-
-
-<div class="category active" data-name="Mini Puzzle">
-<div class="category-icon">🧩</div>
-<div class="category-info">
-<div class="category-name">Головоломки</div>
-<div class="category-desc">Mini Puzzle</div>
-</div>
-<div class="switch"></div>
-</div>
-
-
-<div class="category active" data-name="Viewpoint">
-<div class="category-icon">👁️</div>
-<div class="category-info">
-<div class="category-name">Смотровые точки</div>
-<div class="category-desc">Viewpoint</div>
-</div>
-<div class="switch"></div>
-</div>
-
-
-<div class="category active" data-name="Domain">
-<div class="category-icon">🏛️</div>
-<div class="category-info">
-<div class="category-name">Подземелья</div>
-<div class="category-desc">Domain</div>
-</div>
-<div class="switch"></div>
-</div>
-
-
-<div class="title">Управление</div>
-
-<button class="action primary" id="apply">
-🔄 Показать выбранное
+<button class="item active" data-map="ALL">
+    <div class="icon">🌎</div>
+    <div class="item-text">
+        <div class="item-name">Все метки</div>
+        <div class="item-sub">Показать всё</div>
+    </div>
 </button>
 
-<button class="action" id="all">
-☑️ Все метки
-</button>
 
-<button class="action" id="none">
-⬜ Скрыть всё
-</button>
+<div class="section">Коллекционные предметы</div>
 
-<button class="action" id="reset">
-↩️ Сбросить
-</button>
+<div id="collectionList"></div>
 
-<button class="action" id="favorite">
-⭐ Избранное
-</button>
 
-<button class="action" id="progress">
+<div class="section">Исследование</div>
+
+<div id="explorationList"></div>
+
+
+<div class="section">Материалы</div>
+
+<div id="materialList"></div>
+
+
+<div class="section">Боссы</div>
+
+<div id="bossList"></div>
+
+
+<div class="section">Головоломки</div>
+
+<div id="puzzleList"></div>
+
+
+<div class="section">Инструменты</div>
+
+<button class="action primary" id="progressBtn">
 📊 Прогресс
 </button>
 
-<button class="action" id="settings">
+<button class="action" id="favoriteBtn">
+⭐ Избранное
+</button>
+
+<button class="action" id="routeBtn">
+🛣️ Маршруты
+</button>
+
+<button class="action" id="notesBtn">
+📝 Мои заметки
+</button>
+
+<button class="action" id="settingsBtn">
 ⚙️ Настройки
 </button>
 
-</div>
+</aside>
 
 
 <div class="bottom">
 
-<button class="active" id="mapTab">
-<div>🗺️</div>
-Карта
+<button id="mapTab" class="active">
+    <div>🗺️</div>
+    Карта
 </button>
 
 <button id="progressTab">
-<div>📊</div>
-Прогресс
+    <div>📊</div>
+    Прогресс
 </button>
 
 <button id="favoriteTab">
-<div>⭐</div>
-Избранное
+    <div>⭐</div>
+    Избранное
 </button>
 
 <button id="settingsTab">
-<div>⚙️</div>
-Настройки
+    <div>⚙️</div>
+    Настройки
 </button>
 
 </div>
@@ -604,7 +478,7 @@ allowfullscreen>
 
 <div class="modal-box">
 
-<button class="close" id="close">×</button>
+<button class="close" id="closeModal">×</button>
 
 <div class="modal-title" id="modalTitle"></div>
 
@@ -617,442 +491,1002 @@ allowfullscreen>
 
 <script>
 
-const frame=document.getElementById("mapFrame");
-const panel=document.getElementById("panel");
+/* =========================================================
+   ДАННЫЕ
+========================================================= */
 
-const categories=[
-...document.querySelectorAll(".category")
-];
+const categories = {
+
+    collection: [
+
+        ["Common Chest","📦","Обычные сундуки"],
+        ["Exquisite Chest","💎","Богатые сундуки"],
+        ["Precious Chest","💠","Драгоценные сундуки"],
+        ["Luxurious Chest","👑","Роскошные сундуки"],
+        ["Buried Chest","🏺","Закопанные сундуки"],
+        ["Sealed Chest","🔒","Запечатанные сундуки"],
+
+        ["Anemoculus","🌪️","Анемокулы"],
+        ["Geoculus","🟡","Геокулы"],
+        ["Electroculus","⚡","Электрокулы"],
+        ["Dendroculus","🌿","Дендрокулы"],
+        ["Hydroculus","💧","Гидрокулы"],
+        ["Pyroculus","🔥","Пирокулы"],
+        ["Lunoculus","🌙","Лунокулы"],
+
+        ["Crimson Agate","🔴","Багровые агаты"],
+        ["Spirit Carp","🐟","Карпы духа"]
+    ],
+
+    exploration: [
+
+        ["Seelie","🧚","Феи"],
+        ["Teleport Waypoint","🌀","Телепорты"],
+        ["Statue of The Seven","🗿","Статуи"],
+        ["World Quests","📜","Мировые квесты"],
+        ["Time Trial Challenge","🎯","Испытания"],
+        ["Viewpoint","👁️","Смотровые точки"],
+        ["Domain","🏛️","Подземелья"]
+    ],
+
+    materials: [
+
+        ["White Iron Chunk","⚪","Белое железо"],
+        ["Crystal Chunk","💎","Кристалл"],
+        ["Iron Chunk","⛏️","Железо"],
+        ["Magical Crystal Chunk","🔷","Магический кристалл"],
+
+        ["Dandelion Seed","🌼","Семя одуванчика"],
+        ["Glaze Lily","🌸","Глазурная лилия"],
+        ["Cor Lapis","🟡","Кор ляпис"],
+        ["Wolfhook","🫐","Волчий крюк"],
+        ["Starconch","🐚","Звёздная раковина"],
+        ["Silk Flower","🌺","Шёлковый цветок"]
+    ],
+
+    bosses: [
+
+        ["Anemo Hypostasis","🌪️","Анемо гипостазис"],
+        ["Cryo Regisvine","❄️","Крио Регисвайн"],
+        ["Cryo Hypostasis","❄️","Крио гипостазис"],
+        ["Maguu Kenki","⚔️","Магу Кэнки"],
+        ["Ruin Serpent","🐍","Змей руин"],
+        ["Geovishap","🪨","Геовишап"]
+    ],
+
+    puzzles: [
+
+        ["Pressure Plate","⬜","Нажимные плиты"],
+        ["Torch Puzzle","🔥","Факелы"],
+        ["Elemental Monument","🔷","Элементальные монументы"],
+        ["Mini Puzzle","🧩","Мини-головоломки"],
+        ["Light-Up Tile Puzzle","💡","Световые головоломки"]
+    ]
+
+};
 
 
-/* MENU */
+/* =========================================================
+   СОСТОЯНИЕ
+========================================================= */
 
-document.getElementById("menu").onclick=()=>{
+let state = JSON.parse(
+    localStorage.getItem("teyvat_state") || "{}"
+);
 
-if(innerWidth<=700){
+if(!state.progress)
+    state.progress = {};
 
-panel.classList.toggle("open");
+if(!state.favorites)
+    state.favorites = [];
 
-}else{
+if(!state.notes)
+    state.notes = "";
 
-panel.classList.toggle("hide");
+if(!state.routes)
+    state.routes = [];
+
+
+function save(){
+
+    localStorage.setItem(
+        "teyvat_state",
+        JSON.stringify(state)
+    );
 
 }
+
+
+/* =========================================================
+   MAP
+========================================================= */
+
+const frame =
+    document.getElementById("mapFrame");
+
+
+function showMap(name){
+
+    if(name === "ALL"){
+
+        frame.src =
+        "https://genshin-impact-map.appsample.com/location?no_heading=1";
+
+        return;
+    }
+
+    frame.src =
+    "https://genshin-impact-map.appsample.com/location?names="
+    + encodeURIComponent(name)
+    + "&no_heading=1";
+}
+
+
+/* =========================================================
+   СОЗДАНИЕ СПИСКОВ
+========================================================= */
+
+function makeList(target,data){
+
+    const el =
+        document.getElementById(target);
+
+    data.forEach(item=>{
+
+        const [id,icon,name] = item;
+
+        const button =
+            document.createElement("button");
+
+        button.className="item";
+
+        button.dataset.map=id;
+
+        button.innerHTML=`
+            <div class="icon">${icon}</div>
+
+            <div class="item-text">
+
+                <div class="item-name">
+                    ${name}
+                </div>
+
+                <div class="item-sub">
+                    ${id}
+                </div>
+
+            </div>
+
+            <div class="arrow">›</div>
+        `;
+
+        button.onclick=()=>{
+
+            document
+            .querySelectorAll(".item")
+            .forEach(x=>
+                x.classList.remove("active")
+            );
+
+            button.classList.add("active");
+
+            showMap(id);
+
+        };
+
+        el.appendChild(button);
+
+    });
+
+}
+
+
+makeList(
+    "collectionList",
+    categories.collection
+);
+
+makeList(
+    "explorationList",
+    categories.exploration
+);
+
+makeList(
+    "materialList",
+    categories.materials
+);
+
+makeList(
+    "bossList",
+    categories.bosses
+);
+
+makeList(
+    "puzzleList",
+    categories.puzzles
+);
+
+
+/* ВСЕ */
+
+document
+.querySelector('[data-map="ALL"]')
+.onclick=()=>{
+
+    document
+    .querySelectorAll(".item")
+    .forEach(x=>
+        x.classList.remove("active")
+    );
+
+    document
+    .querySelector('[data-map="ALL"]')
+    .classList.add("active");
+
+    showMap("ALL");
 
 };
 
 
-/* MAP */
+/* =========================================================
+   ПОИСК
+========================================================= */
 
-function loadMap(names){
+const aliases = {
 
-let url=
-"https://genshin-impact-map.appsample.com/location";
+    "сундук": [
+        "Common Chest",
+        "Exquisite Chest",
+        "Precious Chest",
+        "Luxurious Chest",
+        "Buried Chest",
+        "Sealed Chest"
+    ],
 
-if(names.length){
+    "сундуки": [
+        "Common Chest",
+        "Exquisite Chest",
+        "Precious Chest",
+        "Luxurious Chest",
+        "Buried Chest",
+        "Sealed Chest"
+    ],
 
-url+=
-"?names="+
-encodeURIComponent(
-names.join(",")
-)+
-"&no_heading=1";
+    "окулус": [
+        "Anemoculus",
+        "Geoculus",
+        "Electroculus",
+        "Dendroculus",
+        "Hydroculus",
+        "Pyroculus",
+        "Lunoculus"
+    ],
 
-}else{
+    "окулусы": [
+        "Anemoculus",
+        "Geoculus",
+        "Electroculus",
+        "Dendroculus",
+        "Hydroculus",
+        "Pyroculus",
+        "Lunoculus"
+    ],
 
-url+="?no_heading=1";
+    "фея": ["Seelie"],
+    "феи": ["Seelie"],
 
-}
+    "телепорт": ["Teleport Waypoint"],
+    "телепорты": ["Teleport Waypoint"],
 
-frame.src=url;
+    "квест": ["World Quests"],
+    "квесты": ["World Quests"],
 
-localStorage.setItem(
-"teyvat_filters",
-JSON.stringify(names)
-);
+    "испытание": ["Time Trial Challenge"],
+    "испытания": ["Time Trial Challenge"],
 
-}
+    "головоломка": ["Mini Puzzle"],
+    "головоломки": ["Mini Puzzle"],
 
+    "факел": ["Torch Puzzle"],
+    "факелы": ["Torch Puzzle"],
 
-/* CLICK CATEGORY */
-
-categories.forEach(item=>{
-
-item.onclick=()=>{
-
-/*
-Сделано специально:
-один клик = сразу применить
-*/
-
-categories.forEach(x=>
-x.classList.remove("active")
-);
-
-item.classList.add("active");
-
-loadMap([
-item.dataset.name
-]);
-
+    "плита": ["Pressure Plate"],
+    "плиты": ["Pressure Plate"]
 };
+
+
+document
+.getElementById("searchInput")
+.addEventListener("keydown",e=>{
+
+    if(e.key !== "Enter")
+        return;
+
+    const text =
+        e.target.value
+        .trim()
+        .toLowerCase();
+
+    if(!text)
+        return;
+
+    let result =
+        aliases[text];
+
+    if(!result){
+
+        const key =
+            Object.keys(aliases)
+            .find(x =>
+                x.includes(text) ||
+                text.includes(x)
+            );
+
+        if(key)
+            result=aliases[key];
+
+    }
+
+    if(!result){
+
+        alert("Ничего не найдено");
+
+        return;
+    }
+
+    /*
+       Если найдено несколько типов,
+       AppSample принимает их через запятую.
+    */
+
+    frame.src =
+        "https://genshin-impact-map.appsample.com/location?names="
+        + encodeURIComponent(result.join(","))
+        + "&no_heading=1";
 
 });
 
 
-/* ALL */
+/* =========================================================
+   MODAL
+========================================================= */
 
-document.getElementById("all").onclick=()=>{
+const modal =
+    document.getElementById("modal");
 
-categories.forEach(x=>
-x.classList.add("active")
-);
+const modalTitle =
+    document.getElementById("modalTitle");
 
-loadMap(
-categories.map(x=>x.dataset.name)
-);
-
-};
-
-
-/* NONE */
-
-document.getElementById("none").onclick=()=>{
-
-categories.forEach(x=>
-x.classList.remove("active")
-);
-
-loadMap([]);
-
-};
+const modalContent =
+    document.getElementById("modalContent");
 
 
-/* APPLY */
+function openModal(title,content){
 
-document.getElementById("apply").onclick=()=>{
+    modalTitle.innerText=title;
 
-const names=
-categories
-.filter(x=>
-x.classList.contains("active")
-)
-.map(x=>
-x.dataset.name
-);
+    modalContent.innerHTML=content;
 
-loadMap(names);
+    modal.classList.add("show");
 
-};
+}
 
 
-/* RESET */
+function closeModal(){
 
-document.getElementById("reset").onclick=()=>{
+    modal.classList.remove("show");
 
-categories.forEach(x=>
-x.classList.add("active")
-);
+}
 
-frame.src=
-"https://genshin-impact-map.appsample.com/location?no_heading=1";
 
-localStorage.removeItem(
-"teyvat_filters"
-);
+document
+.getElementById("closeModal")
+.onclick=closeModal;
+
+
+modal.onclick=e=>{
+
+    if(e.target===modal)
+        closeModal();
 
 };
 
 
-/* SEARCH */
+/* =========================================================
+   ПРОГРЕСС
+========================================================= */
 
-const aliases={
+const progressNames = {
 
-"сундук":[
-"Common Chest",
-"Exquisite Chest",
-"Precious Chest",
-"Luxurious Chest",
-"Buried Chest",
-"Sealed Chest"
-],
+    "Common Chest":"Обычные сундуки",
+    "Exquisite Chest":"Богатые сундуки",
+    "Precious Chest":"Драгоценные сундуки",
+    "Luxurious Chest":"Роскошные сундуки",
 
-"сундуки":[
-"Common Chest",
-"Exquisite Chest",
-"Precious Chest",
-"Luxurious Chest",
-"Buried Chest",
-"Sealed Chest"
-],
+    "Anemoculus":"Анемокулы",
+    "Geoculus":"Геокулы",
+    "Electroculus":"Электрокулы",
+    "Dendroculus":"Дендрокулы",
+    "Hydroculus":"Гидрокулы",
+    "Pyroculus":"Пирокулы",
+    "Lunoculus":"Лунокулы",
 
-"окулус":[
-"Anemoculus",
-"Geoculus",
-"Electroculus",
-"Dendroculus"
-],
+    "Seelie":"Феи",
+    "World Quests":"Квесты"
+};
 
-"окулусы":[
-"Anemoculus",
-"Geoculus",
-"Electroculus",
-"Dendroculus"
-],
 
-"фея":["Seelie"],
+function progressWindow(){
 
-"феи":["Seelie"],
+    let html="";
 
-"анемокул":["Anemoculus"],
+    Object.keys(progressNames)
+    .forEach(id=>{
 
-"анемокулы":["Anemoculus"],
+        const value =
+            Number(state.progress[id] || 0);
 
-"геокул":["Geoculus"],
+        const total =
+            Number(
+                promptTotals[id] || 0
+            );
 
-"геокулы":["Geoculus"],
+        let percent=0;
 
-"электрокул":["Electroculus"],
+        if(total)
+            percent=
+                Math.min(
+                    100,
+                    Math.round(value/total*100)
+                );
 
-"электрокулы":["Electroculus"],
+        html+=`
 
-"дендрокул":["Dendroculus"],
+        <div class="stat">
 
-"дендрокулы":["Dendroculus"],
+            <div class="stat-title">
+                ${progressNames[id]}
+            </div>
 
-"телепорт":["Teleport Waypoint"],
+            <div>
+                ${value} / ${total || "?"}
+            </div>
 
-"телепорты":["Teleport Waypoint"],
+            <div class="bar">
+                <div style="width:${percent}%"></div>
+            </div>
 
-"квест":["World Quests"],
+            <div class="percent">
+                ${total ? percent+"%" : "Количество можно указать позже"}
+            </div>
 
-"квесты":["World Quests"],
+        </div>
 
-"испытание":["Time Trial Challenge"],
+        `;
 
-"испытания":["Time Trial Challenge"],
+    });
 
-"плита":["Pressure Plate"],
 
-"плиты":["Pressure Plate"],
+    html+=`
 
-"факел":["Torch Puzzle"],
+    <button class="action primary"
+            onclick="changeProgress()">
 
-"факелы":["Torch Puzzle"],
+        ✏️ Изменить прогресс
 
-"головоломка":["Mini Puzzle"],
+    </button>
 
-"головоломки":["Mini Puzzle"],
+    <button class="action"
+            onclick="resetProgress()">
 
-"смотровая точка":["Viewpoint"],
+        🔄 Сбросить прогресс
 
-"смотровые точки":["Viewpoint"],
+    </button>
 
-"подземелье":["Domain"],
+    `;
 
-"подземелья":["Domain"]
+
+    openModal(
+        "📊 Прогресс",
+        html
+    );
+
+}
+
+
+/*
+   Количество точек специально вынесено отдельно.
+   Его можно заменить актуальными числами,
+   когда подключим собственные данные.
+*/
+
+const promptTotals={
+
+    "Common Chest":0,
+    "Exquisite Chest":0,
+    "Precious Chest":0,
+    "Luxurious Chest":0,
+
+    "Anemoculus":54,
+    "Geoculus":131,
+    "Electroculus":181,
+    "Dendroculus":271,
+    "Hydroculus":225,
+    "Pyroculus":249,
+    "Lunoculus":197,
+
+    "Seelie":0,
+    "World Quests":0
+};
+
+
+function changeProgress(){
+
+    const id =
+        prompt(
+            "Введите ID категории:\n\n"
+            +Object.entries(progressNames)
+            .map(x=>x[0]+" — "+x[1])
+            .join("\n")
+        );
+
+    if(!id || !progressNames[id])
+        return;
+
+    const value =
+        Number(
+            prompt(
+                "Сколько собрано?"
+            )
+        );
+
+    if(
+        !Number.isNaN(value) &&
+        value>=0
+    ){
+
+        state.progress[id]=value;
+
+        save();
+
+        progressWindow();
+
+    }
+
+}
+
+
+function resetProgress(){
+
+    if(!confirm(
+        "Сбросить весь прогресс?"
+    ))
+        return;
+
+    state.progress={};
+
+    save();
+
+    progressWindow();
+
+}
+
+
+document
+.getElementById("progressBtn")
+.onclick=progressWindow;
+
+document
+.getElementById("progressTab")
+.onclick=progressWindow;
+
+
+/* =========================================================
+   ИЗБРАННОЕ
+========================================================= */
+
+function favoriteWindow(){
+
+    let html="";
+
+    if(!state.favorites.length){
+
+        html=`
+        <div class="stat">
+            Пока ничего нет.
+        </div>
+        `;
+
+    }else{
+
+        state.favorites.forEach((x,i)=>{
+
+            html+=`
+
+            <div class="stat">
+
+                ⭐ ${x}
+
+                <button
+                    class="action"
+                    onclick="removeFavorite(${i})">
+
+                    Удалить
+
+                </button>
+
+            </div>
+
+            `;
+
+        });
+
+    }
+
+    html+=`
+
+    <button
+        class="action primary"
+        onclick="addFavorite()">
+
+        ➕ Добавить категорию
+
+    </button>
+
+    `;
+
+    openModal(
+        "⭐ Избранное",
+        html
+    );
+
+}
+
+
+function addFavorite(){
+
+    const value =
+        prompt(
+            "Что добавить в избранное?"
+        );
+
+    if(!value)
+        return;
+
+    if(!state.favorites.includes(value))
+        state.favorites.push(value);
+
+    save();
+
+    favoriteWindow();
+
+}
+
+
+function removeFavorite(i){
+
+    state.favorites.splice(i,1);
+
+    save();
+
+    favoriteWindow();
+
+}
+
+
+document
+.getElementById("favoriteBtn")
+.onclick=favoriteWindow;
+
+document
+.getElementById("favoriteTab")
+.onclick=favoriteWindow;
+
+
+/* =========================================================
+   МАРШРУТЫ
+========================================================= */
+
+function routeWindow(){
+
+    let html="";
+
+    if(!state.routes.length){
+
+        html=`
+
+        <div class="stat">
+
+            Маршрутов пока нет.
+
+        </div>
+
+        `;
+
+    }else{
+
+        state.routes.forEach((r,i)=>{
+
+            html+=`
+
+            <div class="route">
+
+                <b>🛣️ ${r.name}</b>
+
+                <span>
+                    ${r.description}
+                </span>
+
+                <button
+                    class="action"
+                    onclick="deleteRoute(${i})">
+
+                    Удалить
+
+                </button>
+
+            </div>
+
+            `;
+
+        });
+
+    }
+
+
+    html+=`
+
+    <button
+        class="action primary"
+        onclick="addRoute()">
+
+        ➕ Новый маршрут
+
+    </button>
+
+    `;
+
+
+    openModal(
+        "🛣️ Маршруты",
+        html
+    );
+
+}
+
+
+function addRoute(){
+
+    const name =
+        prompt("Название маршрута:");
+
+    if(!name)
+        return;
+
+    const description =
+        prompt(
+            "Что собирать по маршруту?"
+        ) || "";
+
+    state.routes.push({
+        name,
+        description
+    });
+
+    save();
+
+    routeWindow();
+
+}
+
+
+function deleteRoute(i){
+
+    state.routes.splice(i,1);
+
+    save();
+
+    routeWindow();
+
+}
+
+
+document
+.getElementById("routeBtn")
+.onclick=routeWindow;
+
+
+/* =========================================================
+   ЗАМЕТКИ
+========================================================= */
+
+function notesWindow(){
+
+    openModal(
+        "📝 Мои заметки",
+
+        `
+
+        <textarea
+            class="note"
+            id="notesArea"
+            placeholder="Например: сначала активировать механизм возле телепорта...">${escapeHtml(state.notes)}</textarea>
+
+        <br><br>
+
+        <button
+            class="action primary"
+            onclick="saveNotes()">
+
+            💾 Сохранить
+
+        </button>
+
+        `
+    );
+
+}
+
+
+function saveNotes(){
+
+    state.notes =
+        document
+        .getElementById("notesArea")
+        .value;
+
+    save();
+
+    closeModal();
+
+}
+
+
+function escapeHtml(text){
+
+    return text
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+
+}
+
+
+document
+.getElementById("notesBtn")
+.onclick=notesWindow;
+
+
+/* =========================================================
+   НАСТРОЙКИ
+========================================================= */
+
+function settingsWindow(){
+
+    openModal(
+        "⚙️ Настройки",
+
+        `
+
+        <div class="stat">
+
+            <b>By Sin</b>
+
+            <br><br>
+
+            Буба лох 😂
+
+        </div>
+
+
+        <button
+            class="action"
+            onclick="toggleCompact()">
+
+            📱 Переключить компактный режим
+
+        </button>
+
+
+        <button
+            class="action"
+            onclick="clearEverything()">
+
+            🗑️ Очистить все данные
+
+        </button>
+
+        `
+    );
+
+}
+
+
+function toggleCompact(){
+
+    document
+    .querySelector(".sidebar")
+    .classList.toggle("hidden");
+
+}
+
+
+function clearEverything(){
+
+    if(!confirm(
+        "Удалить весь сохранённый прогресс, избранное и заметки?"
+    ))
+        return;
+
+    localStorage.removeItem(
+        "teyvat_state"
+    );
+
+    location.reload();
+
+}
+
+
+document
+.getElementById("settingsBtn")
+.onclick=settingsWindow;
+
+document
+.getElementById("settingsTab")
+.onclick=settingsWindow;
+
+
+/* =========================================================
+   МОБИЛЬНОЕ МЕНЮ
+========================================================= */
+
+const sidebar =
+    document.getElementById("sidebar");
+
+
+document
+.getElementById("menuBtn")
+.onclick=()=>{
+
+    if(innerWidth<=700){
+
+        sidebar
+        .classList
+        .toggle("open");
+
+    }else{
+
+        sidebar
+        .classList
+        .toggle("hidden");
+
+    }
 
 };
 
 
 document
-.getElementById("search")
-.addEventListener(
-"keydown",
-e=>{
+.getElementById("mapTab")
+.onclick=()=>{
 
-if(e.key!=="Enter")return;
+    sidebar
+    .classList
+    .remove("open");
 
-const text=
-e.target.value
-.trim()
-.toLowerCase();
+};
 
-if(!text)return;
 
-let names=aliases[text];
+/* =========================================================
+   ЗАПУСК
+========================================================= */
 
-if(!names){
-
-const key=
-Object.keys(aliases)
-.find(x=>
-x.includes(text)||
-text.includes(x)
+console.log(
+    "Teyvat Map loaded"
 );
-
-if(key){
-names=aliases[key];
-}
-
-}
-
-if(names){
-
-loadMap(names);
-
-}else{
-
-alert("Не найдено");
-
-}
-
-});
-
-
-/* MODAL */
-
-function openModal(title,html){
-
-document.getElementById(
-"modalTitle"
-).innerText=title;
-
-document.getElementById(
-"modalContent"
-).innerHTML=html;
-
-document.getElementById(
-"modal"
-).classList.add("show");
-
-}
-
-
-document.getElementById("close").onclick=()=>{
-
-document.getElementById(
-"modal"
-).classList.remove("show");
-
-};
-
-
-document.getElementById("modal").onclick=e=>{
-
-if(e.target.id==="modal"){
-
-e.target.classList.remove("show");
-
-}
-
-};
-
-
-/* FAVORITES */
-
-document.getElementById("favorite").onclick=()=>{
-
-openModal(
-"⭐ Избранное",
-`
-<div class="modal-item">
-Пока пусто
-</div>
-`
-);
-
-};
-
-document.getElementById("favoriteTab").onclick=()=>{
-
-document.getElementById("favorite").click();
-
-};
-
-
-/* PROGRESS */
-
-document.getElementById("progress").onclick=()=>{
-
-const active=
-categories.filter(
-x=>x.classList.contains("active")
-).length;
-
-openModal(
-"📊 Прогресс",
-`
-<div class="modal-item">
-Выбрано категорий:
-<b>${active}/${categories.length}</b>
-</div>
-`
-);
-
-};
-
-document.getElementById("progressTab").onclick=()=>{
-
-document.getElementById("progress").click();
-
-};
-
-
-/* SETTINGS */
-
-document.getElementById("settings").onclick=()=>{
-
-openModal(
-"⚙️ Настройки",
-`
-
-<div class="modal-item">
-By Sin
-</div>
-
-<div class="modal-item">
-Буба лох
-</div>
-
-<button
-class="action"
-onclick="
-localStorage.clear();
-location.reload();
-">
-
-Очистить данные
-
-</button>
-
-`
-);
-
-};
-
-document.getElementById("settingsTab").onclick=()=>{
-
-document.getElementById("settings").click();
-
-};
-
-
-/* RESTORE */
-
-const saved=
-JSON.parse(
-localStorage.getItem(
-"teyvat_filters"
-)||"null"
-);
-
-if(saved){
-
-categories.forEach(item=>{
-
-item.classList.toggle(
-"active",
-saved.includes(
-item.dataset.name
-)
-);
-
-});
-
-}
 
 </script>
 
 </body>
-  </html>
+</html>
