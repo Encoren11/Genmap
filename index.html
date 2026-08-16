@@ -2,727 +2,1829 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Teyvat Map</title>
+
+<meta name="viewport"
+content="width=device-width,
+initial-scale=1,
+maximum-scale=1,
+user-scalable=no">
+
+<title>Teyvat Interactive Map</title>
 
 <style>
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 
-html,body{
- margin:0;width:100%;height:100%;
- overflow:hidden;background:#10131a;
- font-family:Arial,sans-serif;color:white
+*{
+box-sizing:border-box;
+-webkit-tap-highlight-color:transparent;
 }
 
+html,body{
+margin:0;
+width:100%;
+height:100%;
+overflow:hidden;
+background:#11151c;
+font-family:Arial,sans-serif;
+color:white;
+}
+
+/* MAP */
+
 #map{
- position:fixed;inset:0;z-index:1
+position:fixed;
+inset:0;
+z-index:1;
+background:#11151c;
 }
 
 #map iframe{
- width:100%;height:100%;border:0
+display:block;
+width:100%;
+height:100%;
+border:0;
 }
 
 /* TOP */
 
 .top{
- position:fixed;top:10px;left:10px;right:10px;
- z-index:20;display:flex;gap:8px
+position:fixed;
+top:10px;
+left:10px;
+right:10px;
+z-index:20;
+
+display:flex;
+gap:8px;
 }
 
 .search{
- flex:1;height:48px;display:flex;align-items:center;
- padding:0 14px;background:rgba(20,23,31,.96);
- border:1px solid rgba(255,255,255,.1);
- border-radius:15px;backdrop-filter:blur(15px)
+height:48px;
+flex:1;
+
+display:flex;
+align-items:center;
+
+padding:0 14px;
+
+background:rgba(20,24,32,.96);
+
+border:1px solid rgba(255,255,255,.1);
+border-radius:15px;
+
+box-shadow:0 8px 30px rgba(0,0,0,.35);
 }
 
-.search span{margin-right:9px;font-size:18px}
+.search-icon{
+font-size:18px;
+margin-right:9px;
+}
 
 .search input{
- width:100%;border:0;outline:0;background:transparent;
- color:white;font-size:14px
+width:100%;
+
+border:0;
+outline:0;
+
+background:transparent;
+
+color:white;
+font-size:14px;
 }
 
-.search input::placeholder{color:#858b99}
+.search input::placeholder{
+color:#858c9a;
+}
 
 .menu{
- width:48px;height:48px;border:1px solid rgba(255,255,255,.1);
- border-radius:15px;background:rgba(20,23,31,.96);
- color:white;font-size:20px
+width:48px;
+height:48px;
+
+border:1px solid rgba(255,255,255,.1);
+border-radius:15px;
+
+background:rgba(20,24,32,.96);
+
+color:white;
+
+font-size:20px;
 }
 
 /* PANEL */
 
 .panel{
- position:fixed;left:10px;top:70px;bottom:10px;
- width:310px;z-index:15;padding:16px;overflow-y:auto;
- background:rgba(18,21,29,.97);
- border:1px solid rgba(255,255,255,.1);
- border-radius:20px;box-shadow:0 15px 50px rgba(0,0,0,.5);
- backdrop-filter:blur(18px);
- transition:.25s
+position:fixed;
+
+left:10px;
+top:70px;
+bottom:10px;
+
+width:315px;
+
+z-index:15;
+
+padding:16px;
+
+overflow-y:auto;
+
+background:rgba(18,22,30,.97);
+
+border:1px solid rgba(255,255,255,.1);
+border-radius:20px;
+
+box-shadow:0 15px 50px rgba(0,0,0,.55);
+
+transition:.25s;
 }
 
-.panel.hide{transform:translateX(-340px)}
+.panel.hide{
+transform:translateX(-350px);
+}
 
-.logo{font-size:21px;font-weight:700}
-.subtitle{margin:4px 0 18px;color:#858b99;font-size:11px}
+.logo{
+font-size:21px;
+font-weight:bold;
+}
+
+.subtitle{
+margin-top:4px;
+margin-bottom:18px;
+
+font-size:11px;
+color:#858c9a;
+}
 
 .title{
- margin:18px 0 8px;color:#9ba1ae;
- font-size:10px;text-transform:uppercase;letter-spacing:1px
+margin:18px 0 9px;
+
+font-size:10px;
+color:#9ca4b2;
+
+text-transform:uppercase;
+letter-spacing:1px;
 }
 
-/* CATEGORIES */
+/* REGION */
+
+.region{
+width:100%;
+
+display:flex;
+align-items:center;
+
+min-height:49px;
+
+margin-bottom:6px;
+padding:8px;
+
+border:1px solid rgba(255,255,255,.06);
+border-radius:12px;
+
+background:rgba(255,255,255,.045);
+
+color:white;
+
+text-align:left;
+}
+
+.region.active{
+background:rgba(113,140,255,.18);
+border-color:rgba(113,140,255,.4);
+}
+
+.region-icon{
+width:34px;
+height:34px;
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+margin-right:9px;
+
+border-radius:10px;
+
+background:rgba(255,255,255,.07);
+
+font-size:18px;
+}
+
+.region-info{
+flex:1;
+}
+
+.region-name{
+font-size:13px;
+font-weight:bold;
+}
+
+.region-desc{
+margin-top:2px;
+
+font-size:9px;
+color:#777f8d;
+}
+
+/* CATEGORY */
 
 .category{
- width:100%;min-height:49px;display:flex;align-items:center;
- margin-bottom:6px;padding:7px 9px;border:0;
- border-radius:12px;background:rgba(255,255,255,.045);
- color:white;text-align:left
+width:100%;
+
+min-height:49px;
+
+display:flex;
+align-items:center;
+
+margin-bottom:6px;
+
+padding:7px 9px;
+
+border:0;
+border-radius:12px;
+
+background:rgba(255,255,255,.045);
+
+color:white;
+
+text-align:left;
 }
 
 .category-icon{
- width:35px;height:35px;display:flex;
- align-items:center;justify-content:center;
- margin-right:9px;border-radius:10px;
- background:rgba(255,255,255,.07);font-size:18px
+width:35px;
+height:35px;
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+margin-right:9px;
+
+border-radius:10px;
+
+background:rgba(255,255,255,.07);
+
+font-size:18px;
 }
 
-.category-info{flex:1}
-.category-name{font-size:13px;font-weight:600}
-.category-desc{margin-top:2px;color:#777e8d;font-size:9px}
+.category-info{
+flex:1;
+}
+
+.category-name{
+font-size:13px;
+font-weight:bold;
+}
+
+.category-desc{
+margin-top:2px;
+
+font-size:9px;
+color:#777f8d;
+}
+
+/* SWITCH */
 
 .switch{
- width:40px;height:23px;position:relative;
- border-radius:20px;background:#363b46
+width:40px;
+height:23px;
+
+position:relative;
+
+border-radius:20px;
+
+background:#383e49;
 }
 
 .switch:after{
- content:"";position:absolute;width:17px;height:17px;
- left:3px;top:3px;border-radius:50%;background:white;
- transition:.2s
+content:"";
+
+position:absolute;
+
+left:3px;
+top:3px;
+
+width:17px;
+height:17px;
+
+border-radius:50%;
+
+background:white;
+
+transition:.2s;
 }
 
-.category.active .switch{background:#718cff}
-.category.active .switch:after{transform:translateX(17px)}
+.category.active .switch{
+background:#718cff;
+}
 
-/* BUTTONS */
+.category.active .switch:after{
+transform:translateX(17px);
+}
+
+/* ACTION */
 
 .action{
- width:100%;height:45px;margin-bottom:7px;
- border:1px solid rgba(255,255,255,.08);
- border-radius:12px;background:rgba(255,255,255,.045);
- color:white;text-align:left;padding:0 13px;font-size:13px
+width:100%;
+height:45px;
+
+margin-bottom:7px;
+
+border:1px solid rgba(255,255,255,.08);
+border-radius:12px;
+
+background:rgba(255,255,255,.045);
+
+color:white;
+
+text-align:left;
+
+padding:0 13px;
+
+font-size:13px;
 }
 
-.action:active{transform:scale(.98)}
-
 .action.primary{
- background:rgba(113,140,255,.18);
- border-color:rgba(113,140,255,.35)
+background:rgba(113,140,255,.2);
+border-color:rgba(113,140,255,.35);
+}
+
+/* STATUS */
+
+.status{
+margin-top:10px;
+
+padding:10px;
+
+border-radius:11px;
+
+background:rgba(113,140,255,.08);
+
+font-size:10px;
+
+color:#9da6b6;
 }
 
 /* BOTTOM */
 
 .bottom{
- display:none;position:fixed;left:10px;right:10px;bottom:10px;
- height:66px;z-index:30;align-items:center;
- background:rgba(18,21,29,.97);
- border:1px solid rgba(255,255,255,.1);
- border-radius:18px;box-shadow:0 10px 40px rgba(0,0,0,.5)
+display:none;
+
+position:fixed;
+
+left:10px;
+right:10px;
+bottom:10px;
+
+height:65px;
+
+z-index:30;
+
+background:rgba(18,22,30,.97);
+
+border:1px solid rgba(255,255,255,.1);
+
+border-radius:18px;
+
+box-shadow:0 10px 40px rgba(0,0,0,.5);
 }
 
 .bottom button{
- flex:1;height:100%;border:0;background:transparent;
- color:#777e8d;font-size:10px
+width:25%;
+height:100%;
+
+border:0;
+
+background:transparent;
+
+color:#777f8d;
+
+font-size:10px;
 }
 
-.bottom button div{font-size:20px;margin-bottom:3px}
-.bottom button.active{color:#8ca6ff}
+.bottom button div{
+font-size:19px;
+margin-bottom:3px;
+}
+
+.bottom button.active{
+color:#8ca6ff;
+}
 
 /* MODAL */
 
 .modal{
- display:none;position:fixed;inset:0;z-index:50;
- background:rgba(0,0,0,.65);align-items:center;
- justify-content:center;padding:20px
+display:none;
+
+position:fixed;
+
+inset:0;
+
+z-index:100;
+
+align-items:center;
+justify-content:center;
+
+padding:20px;
+
+background:rgba(0,0,0,.65);
 }
 
-.modal.show{display:flex}
+.modal.show{
+display:flex;
+}
 
 .modal-box{
- width:min(430px,100%);max-height:80vh;overflow:auto;
- padding:20px;border-radius:20px;
- background:#181c25;border:1px solid rgba(255,255,255,.1);
- box-shadow:0 20px 70px rgba(0,0,0,.6)
+width:min(430px,100%);
+
+max-height:80vh;
+
+overflow:auto;
+
+padding:20px;
+
+border-radius:20px;
+
+background:#191e27;
+
+border:1px solid rgba(255,255,255,.1);
+
+box-shadow:0 20px 70px rgba(0,0,0,.6);
 }
 
-.modal-title{font-size:20px;font-weight:bold;margin-bottom:15px}
+.modal-title{
+font-size:20px;
+font-weight:bold;
+margin-bottom:15px;
+}
 
 .close{
- float:right;border:0;background:transparent;
- color:#aaa;font-size:22px
+float:right;
+
+border:0;
+
+background:none;
+
+color:#aaa;
+
+font-size:24px;
 }
 
-.stat{
- padding:13px;margin:7px 0;border-radius:12px;
- background:rgba(255,255,255,.05)
+.modal-item{
+padding:13px;
+
+margin:7px 0;
+
+border-radius:11px;
+
+background:rgba(255,255,255,.05);
 }
 
 /* MOBILE */
 
 @media(max-width:700px){
 
- .panel{
-  left:10px;right:10px;top:auto;bottom:84px;
-  width:auto;max-height:70vh;
-  transform:translateY(calc(100% + 100px))
- }
+.panel{
+left:10px;
+right:10px;
 
- .panel.open{transform:translateY(0)}
- .panel.hide{transform:translateY(calc(100% + 100px))}
- .bottom{display:flex}
+top:auto;
+bottom:82px;
+
+width:auto;
+
+max-height:70vh;
+
+transform:translateY(calc(100% + 100px));
 }
+
+.panel.open{
+transform:translateY(0);
+}
+
+.panel.hide{
+transform:translateY(calc(100% + 100px));
+}
+
+.bottom{
+display:flex;
+}
+
+}
+
 </style>
 </head>
 
 <body>
 
+
+<!-- ================= MAP ================= -->
+
 <div id="map">
- <iframe
-  id="mapFrame"
-  src="https://genshin-impact-map.appsample.com/location?no_heading=1"
-  allowfullscreen>
- </iframe>
+
+<iframe
+id="mapFrame"
+src="https://genshin-impact-map.appsample.com/location?no_heading=1"
+allowfullscreen>
+</iframe>
+
 </div>
+
+
+<!-- ================= TOP ================= -->
 
 <div class="top">
 
- <div class="search">
-  <span>🔎</span>
-  <input id="search" placeholder="Например: сундук, Seelie...">
- </div>
+<div class="search">
 
- <button class="menu" id="menu">☰</button>
+<div class="search-icon">
+🔎
+</div>
+
+<input
+id="search"
+placeholder="Поиск объекта..."
+autocomplete="off">
 
 </div>
 
-<div class="panel" id="panel">
+<button
+class="menu"
+id="menu">
 
- <div class="logo">🗺️ Teyvat Map</div>
- <div class="subtitle">Интерактивная карта</div>
+☰
 
- <div class="title">Фильтры</div>
-
- <div class="category active" data-name="Common Chest">
-  <div class="category-icon">📦</div>
-  <div class="category-info">
-   <div class="category-name">Обычные сундуки</div>
-   <div class="category-desc">Common Chest</div>
-  </div>
-  <div class="switch"></div>
- </div>
-
- <div class="category active" data-name="Exquisite Chest">
-  <div class="category-icon">💎</div>
-  <div class="category-info">
-   <div class="category-name">Богатые сундуки</div>
-   <div class="category-desc">Exquisite Chest</div>
-  </div>
-  <div class="switch"></div>
- </div>
-
- <div class="category active" data-name="Precious Chest">
-  <div class="category-icon">💠</div>
-  <div class="category-info">
-   <div class="category-name">Драгоценные сундуки</div>
-   <div class="category-desc">Precious Chest</div>
-  </div>
-  <div class="switch"></div>
- </div>
-
- <div class="category active" data-name="Luxurious Chest">
-  <div class="category-icon">👑</div>
-  <div class="category-info">
-   <div class="category-name">Роскошные сундуки</div>
-   <div class="category-desc">Luxurious Chest</div>
-  </div>
-  <div class="switch"></div>
- </div>
-
- <div class="category active" data-name="Seelie">
-  <div class="category-icon">🧚</div>
-  <div class="category-info">
-   <div class="category-name">Феи</div>
-   <div class="category-desc">Seelie</div>
-  </div>
-  <div class="switch"></div>
- </div>
-
- <div class="category active" data-name="Anemoculus">
-  <div class="category-icon">💠</div>
-  <div class="category-info">
-   <div class="category-name">Анемокулы</div>
-   <div class="category-desc">Anemoculus</div>
-  </div>
-  <div class="switch"></div>
- </div>
-
- <div class="category active" data-name="Geoculus">
-  <div class="category-icon">💠</div>
-  <div class="category-info">
-   <div class="category-name">Геокулы</div>
-   <div class="category-desc">Geoculus</div>
-  </div>
-  <div class="switch"></div>
- </div>
-
- <div class="category active" data-name="Electroculus">
-  <div class="category-icon">⚡</div>
-  <div class="category-info">
-   <div class="category-name">Электрокулы</div>
-   <div class="category-desc">Electroculus</div>
-  </div>
-  <div class="switch"></div>
- </div>
-
- <div class="category active" data-name="Teleport Waypoint">
-  <div class="category-icon">🌀</div>
-  <div class="category-info">
-   <div class="category-name">Телепорты</div>
-   <div class="category-desc">Teleport Waypoint</div>
-  </div>
-  <div class="switch"></div>
- </div>
-
- <div class="category active" data-name="World Quests">
-  <div class="category-icon">📜</div>
-  <div class="category-info">
-   <div class="category-name">Квесты</div>
-   <div class="category-desc">World Quests</div>
-  </div>
-  <div class="switch"></div>
- </div>
-
- <div class="category active" data-name="Time Trial Challenge">
-  <div class="category-icon">🎯</div>
-  <div class="category-info">
-   <div class="category-name">Испытания</div>
-   <div class="category-desc">Time Trial Challenge</div>
-  </div>
-  <div class="switch"></div>
- </div>
-
- <div class="category active" data-name="Pressure Plate">
-  <div class="category-icon">🧩</div>
-  <div class="category-info">
-   <div class="category-name">Загадки</div>
-   <div class="category-desc">Pressure Plate</div>
-  </div>
-  <div class="switch"></div>
- </div>
-
- <div class="category active" data-name="Viewpoint">
-  <div class="category-icon">👁️</div>
-  <div class="category-info">
-   <div class="category-name">Смотровые точки</div>
-   <div class="category-desc">Viewpoint</div>
-  </div>
-  <div class="switch"></div>
- </div>
-
- <div class="title">Действия</div>
-
- <button class="action primary" id="apply">
-  🔄 Применить фильтры
- </button>
-
- <button class="action" id="reset">
-  ↩️ Сбросить фильтры
- </button>
-
- <button class="action" id="favorites">
-  ⭐ Избранное
- </button>
-
- <button class="action" id="progress">
-  📊 Мой прогресс
- </button>
-
- <button class="action" id="settings">
-  ⚙️ Настройки
- </button>
+</button>
 
 </div>
+
+
+<!-- ================= PANEL ================= -->
+
+<div
+class="panel"
+id="panel">
+
+<div class="logo">
+🗺️ Teyvat Map
+</div>
+
+<div class="subtitle">
+Интерактивная карта Тейвата
+</div>
+
+
+<!-- REGIONS -->
+
+<div class="title">
+Регион
+</div>
+
+<button
+class="region active"
+data-region="main">
+
+<div class="region-icon">
+🌍
+</div>
+
+<div class="region-info">
+
+<div class="region-name">
+Тейват
+</div>
+
+<div class="region-desc">
+Основная карта
+</div>
+
+</div>
+
+</button>
+
+
+<button
+class="region"
+data-region="chasm">
+
+<div class="region-icon">
+⛰️
+</div>
+
+<div class="region-info">
+
+<div class="region-name">
+Разлом
+</div>
+
+<div class="region-desc">
+Отдельный раздел карты
+</div>
+
+</div>
+
+</button>
+
+
+<button
+class="region"
+data-region="enkanomiya">
+
+<div class="region-icon">
+🌊
+</div>
+
+<div class="region-info">
+
+<div class="region-name">
+Энканомия
+</div>
+
+<div class="region-desc">
+Отдельный раздел карты
+</div>
+
+</div>
+
+</button>
+
+
+<!-- CATEGORIES -->
+
+<div class="title">
+Метки
+</div>
+
+
+<div
+class="category active"
+data-name="Common Chest">
+
+<div class="category-icon">
+📦
+</div>
+
+<div class="category-info">
+
+<div class="category-name">
+Обычный сундук
+</div>
+
+<div class="category-desc">
+Common Chest
+</div>
+
+</div>
+
+<div class="switch"></div>
+
+</div>
+
+
+<div
+class="category active"
+data-name="Exquisite Chest">
+
+<div class="category-icon">
+💎
+</div>
+
+<div class="category-info">
+
+<div class="category-name">
+Богатый сундук
+</div>
+
+<div class="category-desc">
+Exquisite Chest
+</div>
+
+</div>
+
+<div class="switch"></div>
+
+</div>
+
+
+<div
+class="category active"
+data-name="Precious Chest">
+
+<div class="category-icon">
+💠
+</div>
+
+<div class="category-info">
+
+<div class="category-name">
+Драгоценный сундук
+</div>
+
+<div class="category-desc">
+Precious Chest
+</div>
+
+</div>
+
+<div class="switch"></div>
+
+</div>
+
+
+<div
+class="category active"
+data-name="Luxurious Chest">
+
+<div class="category-icon">
+👑
+</div>
+
+<div class="category-info">
+
+<div class="category-name">
+Роскошный сундук
+</div>
+
+<div class="category-desc">
+Luxurious Chest
+</div>
+
+</div>
+
+<div class="switch"></div>
+
+</div>
+
+
+<div
+class="category active"
+data-name="Buried Chest">
+
+<div class="category-icon">
+🏺
+</div>
+
+<div class="category-info">
+
+<div class="category-name">
+Закопанный сундук
+</div>
+
+<div class="category-desc">
+Buried Chest
+</div>
+
+</div>
+
+<div class="switch"></div>
+
+</div>
+
+
+<div
+class="category active"
+data-name="Sealed Chest">
+
+<div class="category-icon">
+🔒
+</div>
+
+<div class="category-info">
+
+<div class="category-name">
+Запечатанный сундук
+</div>
+
+<div class="category-desc">
+Sealed Chest
+</div>
+
+</div>
+
+<div class="switch"></div>
+
+</div>
+
+
+<div
+class="category active"
+data-name="Seelie">
+
+<div class="category-icon">
+🧚
+</div>
+
+<div class="category-info">
+
+<div class="category-name">
+Феи
+</div>
+
+<div class="category-desc">
+Seelie
+</div>
+
+</div>
+
+<div class="switch"></div>
+
+</div>
+
+
+<div
+class="category active"
+data-name="Anemoculus">
+
+<div class="category-icon">
+🌪️
+</div>
+
+<div class="category-info">
+
+<div class="category-name">
+Анемокулы
+</div>
+
+<div class="category-desc">
+Anemoculus
+</div>
+
+</div>
+
+<div class="switch"></div>
+
+</div>
+
+
+<div
+class="category active"
+data-name="Geoculus">
+
+<div class="category-icon">
+🟡
+</div>
+
+<div class="category-info">
+
+<div class="category-name">
+Геокулы
+</div>
+
+<div class="category-desc">
+Geoculus
+</div>
+
+</div>
+
+<div class="switch"></div>
+
+</div>
+
+
+<div
+class="category active"
+data-name="Electroculus">
+
+<div class="category-icon">
+⚡
+</div>
+
+<div class="category-info">
+
+<div class="category-name">
+Электрокулы
+</div>
+
+<div class="category-desc">
+Electroculus
+</div>
+
+</div>
+
+<div class="switch"></div>
+
+</div>
+
+
+<div
+class="category active"
+data-name="Teleport Waypoint">
+
+<div class="category-icon">
+🌀
+</div>
+
+<div class="category-info">
+
+<div class="category-name">
+Телепорты
+</div>
+
+<div class="category-desc">
+Teleport Waypoint
+</div>
+
+</div>
+
+<div class="switch"></div>
+
+</div>
+
+
+<div
+class="category active"
+data-name="Statue of The Seven">
+
+<div class="category-icon">
+🗿
+</div>
+
+<div class="category-info">
+
+<div class="category-name">
+Статуи Архонтов
+</div>
+
+<div class="category-desc">
+Statue of The Seven
+</div>
+
+</div>
+
+<div class="switch"></div>
+
+</div>
+
+
+<div
+class="category active"
+data-name="World Quests">
+
+<div class="category-icon">
+📜
+</div>
+
+<div class="category-info">
+
+<div class="category-name">
+Мировые задания
+</div>
+
+<div class="category-desc">
+World Quests
+</div>
+
+</div>
+
+<div class="switch"></div>
+
+</div>
+
+
+<div
+class="category active"
+data-name="Time Trial Challenge">
+
+<div class="category-icon">
+🎯
+</div>
+
+<div class="category-info">
+
+<div class="category-name">
+Испытания
+</div>
+
+<div class="category-desc">
+Time Trial Challenge
+</div>
+
+</div>
+
+<div class="switch"></div>
+
+</div>
+
+
+<div
+class="category active"
+data-name="Pressure Plate">
+
+<div class="category-icon">
+🧩
+</div>
+
+<div class="category-info">
+
+<div class="category-name">
+Плиты
+</div>
+
+<div class="category-desc">
+Pressure Plate
+</div>
+
+</div>
+
+<div class="switch"></div>
+
+</div>
+
+
+<div
+class="category active"
+data-name="Elemental Monument">
+
+<div class="category-icon">
+🔮
+</div>
+
+<div class="category-info">
+
+<div class="category-name">
+Элементальные монументы
+</div>
+
+<div class="category-desc">
+Elemental Monument
+</div>
+
+</div>
+
+<div class="switch"></div>
+
+</div>
+
+
+<div
+class="category active"
+data-name="Torch Puzzle">
+
+<div class="category-icon">
+🔥
+</div>
+
+<div class="category-info">
+
+<div class="category-name">
+Факелы
+</div>
+
+<div class="category-desc">
+Torch Puzzle
+</div>
+
+</div>
+
+<div class="switch"></div>
+
+</div>
+
+
+<div
+class="category active"
+data-name="Mini Puzzle">
+
+<div class="category-icon">
+🧩
+</div>
+
+<div class="category-info">
+
+<div class="category-name">
+Головоломки
+</div>
+
+<div class="category-desc">
+Mini Puzzle
+</div>
+
+</div>
+
+<div class="switch"></div>
+
+</div>
+
+
+<div
+class="category active"
+data-name="Viewpoint">
+
+<div class="category-icon">
+👁️
+</div>
+
+<div class="category-info">
+
+<div class="category-name">
+Смотровые точки
+</div>
+
+<div class="category-desc">
+Viewpoint
+</div>
+
+</div>
+
+<div class="switch"></div>
+
+</div>
+
+
+<div class="category active"
+data-name="Domain">
+
+<div class="category-icon">
+🏛️
+</div>
+
+<div class="category-info">
+
+<div class="category-name">
+Подземелья
+</div>
+
+<div class="category-desc">
+Domain
+</div>
+
+</div>
+
+<div class="switch"></div>
+
+</div>
+
+
+<!-- ACTIONS -->
+
+<div class="title">
+Управление
+</div>
+
+<button
+class="action primary"
+id="apply">
+
+🔄 Применить фильтры
+
+</button>
+
+<button
+class="action"
+id="all">
+
+☑️ Включить всё
+
+</button>
+
+<button
+class="action"
+id="none">
+
+⬜ Выключить всё
+
+</button>
+
+<button
+class="action"
+id="reset">
+
+↩️ Сбросить карту
+
+</button>
+
+<button
+class="action"
+id="favorite">
+
+⭐ Избранное
+
+</button>
+
+<button
+class="action"
+id="progress">
+
+📊 Прогресс
+
+</button>
+
+<button
+class="action"
+id="settings">
+
+⚙️ Настройки
+
+</button>
+
+<div
+class="status"
+id="status">
+
+Карта загружена
+
+</div>
+
+</div>
+
+
+<!-- ================= BOTTOM ================= -->
 
 <div class="bottom">
 
- <button class="active" id="mapTab">
-  <div>🗺️</div>Карта
- </button>
+<button
+class="active"
+id="mapTab">
 
- <button id="progressTab">
-  <div>📊</div>Прогресс
- </button>
+<div>🗺️</div>
+Карта
 
- <button id="favoriteTab">
-  <div>⭐</div>Избранное
- </button>
+</button>
 
- <button id="settingsTab">
-  <div>⚙️</div>Настройки
- </button>
+<button
+id="progressTab">
+
+<div>📊</div>
+Прогресс
+
+</button>
+
+<button
+id="favoriteTab">
+
+<div>⭐</div>
+Избранное
+
+</button>
+
+<button
+id="settingsTab">
+
+<div>⚙️</div>
+Настройки
+
+</button>
 
 </div>
 
-<div class="modal" id="modal">
 
- <div class="modal-box">
+<!-- ================= MODAL ================= -->
 
-  <button class="close" id="close">×</button>
+<div
+class="modal"
+id="modal">
 
-  <div class="modal-title" id="modalTitle"></div>
+<div class="modal-box">
 
-  <div id="modalContent"></div>
+<button
+class="close"
+id="close">
 
- </div>
+×
+
+</button>
+
+<div
+class="modal-title"
+id="modalTitle">
+</div>
+
+<div
+id="modalContent">
+</div>
 
 </div>
+
+</div>
+
 
 <script>
 
-/* =========================
-   TELEGRAM
-========================= */
+/* ==========================================
+   ELEMENTS
+========================================== */
 
-if(window.Telegram && Telegram.WebApp){
- Telegram.WebApp.ready();
- Telegram.WebApp.expand();
+const frame =
+document.getElementById("mapFrame");
+
+const panel =
+document.getElementById("panel");
+
+const status =
+document.getElementById("status");
+
+const categories =
+[
+...document.querySelectorAll(".category")
+];
+
+
+/* ==========================================
+   TELEGRAM
+========================================== */
+
+if(
+window.Telegram &&
+Telegram.WebApp
+){
+
+Telegram.WebApp.ready();
+
+Telegram.WebApp.expand();
+
 }
 
 
-/* =========================
-   ELEMENTS
-========================= */
-
-const frame=document.getElementById("mapFrame");
-const panel=document.getElementById("panel");
-const modal=document.getElementById("modal");
-const modalTitle=document.getElementById("modalTitle");
-const modalContent=document.getElementById("modalContent");
-
-
-/* =========================
+/* ==========================================
    MENU
-========================= */
+========================================== */
 
-document.getElementById("menu").onclick=()=>{
+document
+.getElementById("menu")
+.onclick=()=>{
 
- if(innerWidth<=700)
-  panel.classList.toggle("open");
- else
-  panel.classList.toggle("hide");
+if(
+window.innerWidth<=700
+){
+
+panel.classList.toggle("open");
+
+}else{
+
+panel.classList.toggle("hide");
+
+}
 
 };
 
 
-/* =========================
-   LOCAL STORAGE
-========================= */
+/* ==========================================
+   CATEGORY CLICK
+========================================== */
 
-let selected=
- JSON.parse(
-  localStorage.getItem("teyvat_filters") || "null"
- );
+categories.forEach(category=>{
 
-const categories=
- [...document.querySelectorAll(".category")];
+category.onclick=()=>{
+
+category.classList.toggle("active");
+
+updateStatus();
+
+};
+
+});
 
 
-if(selected){
+/* ==========================================
+   STATUS
+========================================== */
 
- categories.forEach(c=>{
+function updateStatus(){
 
-  c.classList.toggle(
-   "active",
-   selected.includes(c.dataset.name)
-  );
+const active =
+categories.filter(
+x=>x.classList.contains("active")
+).length;
 
- });
+status.innerText =
+"Выбрано категорий: "+
+active+
+"/"+
+categories.length;
 
 }
 
 
-/* =========================
-   MAP UPDATE
-========================= */
+/* ==========================================
+   APPLY
+========================================== */
 
 function applyFilters(){
 
- const names=
- categories
- .filter(c=>c.classList.contains("active"))
- .map(c=>c.dataset.name);
+const names =
+categories
+.filter(
+x=>x.classList.contains("active")
+)
+.map(
+x=>x.dataset.name
+);
 
- localStorage.setItem(
-  "teyvat_filters",
-  JSON.stringify(names)
- );
+let url =
+"https://genshin-impact-map.appsample.com/location";
 
- let url=
- "https://genshin-impact-map.appsample.com/location";
+if(names.length>0){
 
- if(names.length){
+url +=
+"?names="+
+encodeURIComponent(
+names.join(",")
+)+
+"&no_heading=1";
 
-  url+="?names="+
-  encodeURIComponent(names.join(","));
+}else{
 
-  url+="&no_heading=1";
+url +=
+"?no_heading=1";
 
- }else{
+}
 
-  url+="?no_heading=1";
+status.innerText =
+"Загружаем "+names.length+" категорий...";
 
- }
+frame.src=url;
 
- frame.src=url;
+localStorage.setItem(
+"teyvat_categories",
+JSON.stringify(names)
+);
 
 }
 
 
-/* =========================
-   CATEGORY CLICK
-========================= */
+/* ==========================================
+   APPLY BUTTON
+========================================== */
 
-categories.forEach(c=>{
-
- c.onclick=()=>{
-
-  c.classList.toggle("active");
-
- };
-
-});
+document
+.getElementById("apply")
+.onclick=applyFilters;
 
 
-document.getElementById("apply").onclick=()=>{
+/* ==========================================
+   ALL
+========================================== */
 
- applyFilters();
+document
+.getElementById("all")
+.onclick=()=>{
+
+categories.forEach(
+x=>x.classList.add("active")
+);
+
+updateStatus();
 
 };
 
 
-/* =========================
+/* ==========================================
+   NONE
+========================================== */
+
+document
+.getElementById("none")
+.onclick=()=>{
+
+categories.forEach(
+x=>x.classList.remove("active")
+);
+
+updateStatus();
+
+};
+
+
+/* ==========================================
    RESET
-========================= */
+========================================== */
 
-document.getElementById("reset").onclick=()=>{
+document
+.getElementById("reset")
+.onclick=()=>{
 
- categories.forEach(c=>
-  c.classList.add("active")
- );
+categories.forEach(
+x=>x.classList.add("active")
+);
 
- localStorage.removeItem(
-  "teyvat_filters"
- );
+localStorage.removeItem(
+"teyvat_categories"
+);
 
- applyFilters();
+frame.src =
+"https://genshin-impact-map.appsample.com/location?no_heading=1";
+
+status.innerText =
+"Карта сброшена";
 
 };
 
 
-/* =========================
+/* ==========================================
    SEARCH
-========================= */
+========================================== */
 
-document.getElementById("search")
-.addEventListener("keydown",e=>{
+document
+.getElementById("search")
+.addEventListener(
+"keydown",
+event=>{
 
- if(e.key!=="Enter")return;
+if(event.key!=="Enter")
+return;
 
- const value=e.target.value.trim();
+const value =
+event.target.value.trim();
 
- if(!value)return;
+if(!value)
+return;
 
- frame.src=
- "https://genshin-impact-map.appsample.com/location"+
- "?names="+
- encodeURIComponent(value)+
- "&no_heading=1";
+frame.src =
+"https://genshin-impact-map.appsample.com/location"+
+"?names="+
+encodeURIComponent(value)+
+"&no_heading=1";
+
+status.innerText =
+"Поиск: "+value;
 
 });
 
 
-/* =========================
+/* ==========================================
    MODAL
-========================= */
+========================================== */
 
-function openModal(title,html){
+function openModal(
+title,
+content
+){
 
- modalTitle.textContent=title;
- modalContent.innerHTML=html;
+document
+.getElementById("modalTitle")
+.innerText=title;
 
- modal.classList.add("show");
+document
+.getElementById("modalContent")
+.innerHTML=content;
+
+document
+.getElementById("modal")
+.classList.add("show");
 
 }
 
-document.getElementById("close").onclick=()=>{
- modal.classList.remove("show");
+
+document
+.getElementById("close")
+.onclick=()=>{
+
+document
+.getElementById("modal")
+.classList.remove("show");
+
 };
 
-modal.onclick=e=>{
 
- if(e.target===modal)
-  modal.classList.remove("show");
+document
+.getElementById("modal")
+.onclick=e=>{
+
+if(
+e.target.id==="modal"
+){
+
+e.target.classList.remove("show");
+
+}
 
 };
 
 
-/* =========================
+/* ==========================================
    FAVORITES
-========================= */
+========================================== */
 
-let favorites=
- JSON.parse(
-  localStorage.getItem("teyvat_favorites") || "[]"
- );
+function favorites(){
 
-function showFavorites(){
+openModal(
+"⭐ Избранное",
 
- if(!favorites.length){
+`
+<div class="modal-item">
+Пока здесь нет сохранённых точек.
+</div>
 
-  openModal(
-   "⭐ Избранное",
-   `<div class="stat">
-      Пока ничего нет.
-    </div>
-    <div class="stat">
-      Здесь позже можно будет
-      сохранять конкретные точки.
-    </div>`
-  );
+<div class="modal-item">
+Позже можем сделать собственные
+закладки для конкретных координат.
+</div>
+`
 
-  return;
- }
-
- openModal(
-  "⭐ Избранное",
-  favorites
-   .map(x=>`<div class="stat">⭐ ${x}</div>`)
-   .join("")
- );
+);
 
 }
 
 
-/* =========================
+/* ==========================================
    PROGRESS
-========================= */
+========================================== */
 
-function showProgress(){
+function progress(){
 
- const total=
-  categories.length;
+const active =
+categories.filter(
+x=>x.classList.contains("active")
+).length;
 
- const active=
-  categories
-   .filter(x=>
-    x.classList.contains("active")
-   ).length;
+const total =
+categories.length;
 
- const percent=
-  Math.round(active/total*100);
+const percent =
+Math.round(
+active/total*100
+);
 
- openModal(
-  "📊 Прогресс",
-  `
-   <div class="stat">
-    Фильтров включено:
-    <b>${active}/${total}</b>
-   </div>
+openModal(
+"📊 Прогресс",
 
-   <div class="stat">
-    Активные категории:
-    <b>${percent}%</b>
-   </div>
+`
+<div class="modal-item">
+Активных категорий:
+<b>${active}/${total}</b>
+</div>
 
-   <div class="stat">
-    Настоящий прогресс найденных
-    сундуков и объектов подключим
-    после получения доступа к данным
-    самих маркеров.
-   </div>
-  `
- );
+<div class="modal-item">
+Фильтры:
+<b>${percent}%</b>
+</div>
+
+<div class="modal-item">
+Настоящий счётчик найденных
+сундуков сделаем отдельным слоем,
+потому что маркеры AppSample находятся
+внутри чужого iframe.
+</div>
+`
+
+);
 
 }
 
 
-/* =========================
+/* ==========================================
    SETTINGS
-========================= */
+========================================== */
 
-function showSettings(){
+function settings(){
 
- openModal(
-  "⚙️ Настройки",
-  `
-   <div class="stat">
-    📱 Мобильный режим включён
-   </div>
+openModal(
+"⚙️ Настройки",
 
-   <div class="stat">
-    💾 Фильтры сохраняются
-    автоматически на этом устройстве.
-   </div>
+`
+<div class="modal-item">
+🗺️ Источник карты:
+AppSample
+</div>
 
-   <div class="stat">
-    🗺️ Карта загружается через
-    официальный embed AppSample.
-   </div>
+<div class="modal-item">
+💾 Выбранные категории сохраняются
+на этом устройстве.
+</div>
 
-   <button
-    class="action"
-    onclick="localStorage.clear();location.reload()">
-    🗑️ Сбросить локальные данные
-   </button>
-  `
- );
+<button
+class="action"
+onclick="
+localStorage.clear();
+location.reload();
+">
+
+🗑️ Очистить сохранённые настройки
+
+</button>
+`
+
+);
 
 }
 
 
-/* =========================
+/* ==========================================
    BUTTONS
-========================= */
+========================================== */
 
-document.getElementById("favorites").onclick=
-showFavorites;
+document
+.getElementById("favorite")
+.onclick=favorites;
 
-document.getElementById("progress").onclick=
-showProgress;
+document
+.getElementById("favoriteTab")
+.onclick=favorites;
 
-document.getElementById("settings").onclick=
-showSettings;
+document
+.getElementById("progress")
+.onclick=progress;
 
-document.getElementById("favoriteTab").onclick=
-showFavorites;
+document
+.getElementById("progressTab")
+.onclick=progress;
 
-document.getElementById("progressTab").onclick=
-showProgress;
+document
+.getElementById("settings")
+.onclick=settings;
 
-document.getElementById("settingsTab").onclick=
-showSettings;
+document
+.getElementById("settingsTab")
+.onclick=settings;
 
 
-/* =========================
+/* ==========================================
+   REGION BUTTONS
+========================================== */
+
+/*
+Важно:
+AppSample официально документирует
+names и no_heading, но НЕ документирует
+параметр смены карты на Разлом/Энканомию.
+
+Поэтому здесь не делаем ложный URL.
+*/
+
+document
+.querySelectorAll(".region")
+.forEach(region=>{
+
+region.onclick=()=>{
+
+document
+.querySelectorAll(".region")
+.forEach(
+x=>x.classList.remove("active")
+);
+
+region.classList.add("active");
+
+const name =
+region.dataset.region;
+
+if(name==="main"){
+
+frame.src =
+"https://genshin-impact-map.appsample.com/location?no_heading=1";
+
+status.innerText =
+"Открыта основная карта";
+
+return;
+
+}
+
+openModal(
+region.querySelector(".region-name").innerText,
+
+`
+<div class="modal-item">
+
+⚠️ Этот источник карты не предоставляет
+официального embed-параметра для
+переключения на ${region.querySelector(".region-name").innerText}.
+
+Поэтому я не буду подставлять
+выдуманный URL и снова ломать карту.
+
+</div>
+`
+
+);
+
+};
+
+});
+
+
+/* ==========================================
+   RESTORE FILTERS
+========================================== */
+
+const saved =
+JSON.parse(
+localStorage.getItem(
+"teyvat_categories"
+)||"null"
+);
+
+if(saved){
+
+categories.forEach(category=>{
+
+category.classList.toggle(
+"active",
+saved.includes(
+category.dataset.name
+)
+);
+
+});
+
+}
+
+
+/* ==========================================
    START
-========================= */
+========================================== */
 
-applyFilters();
+updateStatus();
 
 </script>
 
 </body>
-      </html>
+ </html>
